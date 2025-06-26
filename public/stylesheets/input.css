@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for the coupon verification form */
+@layer components {
+  .form-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  .form-select {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200;
+  }
+  
+  .form-group {
+    @apply mb-6;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+  }
+  
+  .code-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 mb-3;
+  }
+}
+
+/* Custom styles for the modern coupon verification form */
+@layer components {
+  /* Modern Form Inputs */
+  .form-input-modern {
+    @apply w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all duration-200 bg-white shadow-sm;
+  }
+  
+  .form-select-modern {
+    @apply w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none transition-all duration-200 bg-white shadow-sm;
+  }
+  
+  /* Modern Buttons */
+  .btn-encrypt {
+    @apply w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-submit {
+    @apply w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  /* Service Cards */
+  .service-card {
+    @apply bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:scale-105;
+  }
+  
+  /* Social Links */
+  .social-link {
+    @apply flex items-center space-x-3 text-gray-400 hover:text-white transition-colors duration-200;
+  }
+  
+  /* Error Messages */
+  .error-message {
+    @apply text-red-500 text-sm mt-1 hidden;
+  }
+  
+  .error-message.show {
+    @apply block;
+  }
+  
+  /* Animations */
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+  
+  /* Loading Spinner */
+  .spinner {
+    @apply animate-spin rounded-full h-5 w-5 border-b-2 border-white;
+  }
+  
+  /* Form Group Spacing */
+  .form-group {
+    @apply mb-6;
+  }
+  
+  /* Success State */
+  .success-state {
+    @apply bg-green-600 hover:bg-green-700;
+  }
+  
+  /* Error State */
+  .error-state {
+    @apply border-red-300 focus:border-red-500;
+  }
+  
+  /* Success State */
+  .success-state {
+    @apply border-green-300 focus:border-green-500;
+  }
+} 

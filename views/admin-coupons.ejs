@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration des Coupons - Romaric Project</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="px-4 py-6 sm:px-0">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-900">Administration des Coupons</h1>
+                <div class="flex space-x-4">
+                    <a href="/" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                        Accueil
+                    </a>
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupons List -->
+        <div class="px-4 py-6 sm:px-0">
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <div class="px-4 py-5 sm:px-6">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        Liste des Coupons
+                    </h3>
+                    <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                        Gérez les coupons et envoyez les emails de confirmation.
+                    </p>
+                </div>
+                
+                <div class="border-t border-gray-200">
+                    <div id="couponsList" class="divide-y divide-gray-200">
+                        <div class="p-4 text-center text-gray-500">
+                            Chargement des coupons...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="message" class="hidden mt-4 p-4 rounded-md"></div>
+    </div>
+
+    <script src="/javascripts/auth.js"></script>
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.authManager.isAuthenticated()) {
+                window.location.href = '/login';
+                return;
+            }
+            
+            loadCoupons();
+        });
+
+        async function loadCoupons() {
+            try {
+                const response = await fetch('/api/coupons');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayCoupons(data.data);
+                } else {
+                    showMessage('Erreur lors du chargement des coupons', false);
+                }
+            } catch (error) {
+                console.error('Error loading coupons:', error);
+                showMessage('Erreur de connexion', false);
+            }
+        }
+
+        function displayCoupons(coupons) {
+            const couponsList = document.getElementById('couponsList');
+            
+            if (coupons.length === 0) {
+                couponsList.innerHTML = '<div class="p-4 text-center text-gray-500">Aucun coupon trouvé</div>';
+                return;
+            }
+
+            couponsList.innerHTML = coupons.map(coupon => `
+                <div class="p-4 hover:bg-gray-50">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                                        <span class="text-indigo-600 font-bold text-sm">#${coupon.id}</span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        ${coupon.type} - ${coupon.montant} ${coupon.devise}
+                                    </p>
+                                    <p class="text-sm text-gray-500 truncate">
+                                        ${coupon.email}
+                                    </p>
+                                    <div class="flex items-center space-x-2 mt-1">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                            coupon.status === 'verified' ? 'bg-green-100 text-green-800' :
+                                            coupon.status === 'invalid' ? 'bg-red-100 text-red-800' :
+                                            'bg-yellow-100 text-yellow-800'
+                                        }">
+                                            ${coupon.status === 'verified' ? 'Vérifié' :
+                                              coupon.status === 'invalid' ? 'Invalide' : 'En attente'}
+                                        </span>
+                                        <span class="text-xs text-gray-400">
+                                            ${new Date(coupon.createdAt).toLocaleDateString('fr-FR')}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="sendReceivedEmail(${coupon.id})" 
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                📧 Envoyer Email
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function sendReceivedEmail(couponId) {
+            try {
+                const response = await fetch(`/api/coupons/${couponId}/send-received-email`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage(`Email de confirmation envoyé avec succès pour le coupon #${couponId}`, true);
+                } else {
+                    showMessage(`Erreur: ${data.message}`, false);
+                }
+            } catch (error) {
+                console.error('Error sending email:', error);
+                showMessage('Erreur lors de l\'envoi de l\'email', false);
+            }
+        }
+
+        function showMessage(message, isSuccess) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `mt-4 p-4 rounded-md ${isSuccess ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+            
+            // Hide message after 5 seconds
+            setTimeout(() => {
+                messageDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        function logout() {
+            window.authManager.logout();
+        }
+    </script>
+</body>
+</html> 
