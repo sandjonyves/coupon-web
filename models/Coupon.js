@@ -23,17 +23,33 @@ const Coupon = sequelize.define('Coupon', {
     type: DataTypes.STRING(255),
     allowNull: false
   },
+  code1Valid: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
   code2: {
     type: DataTypes.STRING(255),
     allowNull: true
+  },
+  code2Valid: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   code3: {
     type: DataTypes.STRING(255),
     allowNull: true
   },
+  code3Valid: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
   code4: {
     type: DataTypes.STRING(255),
     allowNull: true
+  },
+  code4Valid: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
   email: {
     type: DataTypes.STRING(255),

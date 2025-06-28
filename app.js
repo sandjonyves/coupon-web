@@ -41,11 +41,11 @@ app.use(cors({
 
 // Firebase Admin SDK configuration
 var admin = require("firebase-admin");
-var serviceAccount = require("./romaric-projet-firebase-adminsdk-fbsvc-794889836c.json");
+// var serviceAccount = require("./romaric-projet-firebase-adminsdk-fbsvc-794889836c.json");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount)
+// });
 
 // Initialize database
 syncDatabase().then(() => {

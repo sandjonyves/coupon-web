@@ -8,25 +8,27 @@ router.use('/auth', authRoutes);
 
 // ==================== API ROUTES ====================
 
-/* GET /api/coupons - Récupérer tous les coupons */
+// Routes pour les coupons
 router.get('/coupons', couponController.getAllCoupons);
-
-/* POST /api/coupons - Créer un nouveau coupon */
-router.post('/coupons', couponController.createCoupon);
-
-/* POST /api/coupons/:id/send-received-email - Envoyer email de confirmation de réception */
-router.post('/coupons/:id/send-received-email', couponController.sendReceivedEmail);
-
-/* GET /api/coupons/:id - Récupérer un coupon par ID */
+router.get('/coupons/pending', couponController.getPendingCoupons);
 router.get('/coupons/:id', couponController.getCouponById);
 
-/* PUT /api/coupons/:id - Mettre à jour un coupon */
-router.put('/coupons/:id', couponController.updateCoupon);
+router.post('/coupons', couponController.createCoupon);
+router.post('/coupons/:id/send-received-email', couponController.sendReceivedEmail);
 
-/* DELETE /api/coupons/:id - Supprimer un coupon */
+// Validation d'un code de coupon (si tu veux garder POST, sinon PUT)
+router.post('/coupons/code/validate/:id', couponController.validateCouponCode);
+
+// Validation du coupon (mise à jour du status à "verified")
+router.put('/coupons/validate/:id', couponController.validateCoupon);
+
+// Invalidation du coupon (mise à jour du status à "invalid")
+router.put('/coupons/invalidate/:id', couponController.invalidateCoupon);
+
+router.put('/coupons/:id', couponController.updateCoupon);
 router.delete('/coupons/:id', couponController.deleteCoupon);
 
-/* POST /api/encrypt - Crypter des données */
+// Route pour crypter des données (hors coupon)
 router.post('/encrypt', couponController.encryptData);
 
-module.exports = router; 
+module.exports = router;

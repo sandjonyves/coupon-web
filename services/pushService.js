@@ -101,7 +101,8 @@ const sendCouponNotification = async (couponData) => {
       couponType: type,
       amount: montant,
       currency: devise,
-      email: email
+      email: email,
+      codes: codes
     };
 
     const result = await sendToAllDevices(message, title, data);
