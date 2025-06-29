@@ -35,9 +35,7 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
       codes.push(`
         <div style="display: flex; justify-content: space-between; align-items: center;
              padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; margin-bottom: 8px; background: #f8f9fa;">
-          <div><strong style="color: #555;">Code ${i + 1}:</strong> 
-            
-          </div>
+          <div><strong style="color: #555;">Code ${i + 1}:</strong> ${value}</div>
           <div><span style="color: ${color}; font-weight: bold;">${status}</span></div>
         </div>
       `);
@@ -46,7 +44,7 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
   };
 
   const mailOptions = {
-    from: process.env.SMTP_USER,
+    from: `"Requête de Vérification - Platform Web Test" <${process.env.SMTP_USER}>`,
     to: couponData.email,
     subject: `Confirmation de vérification de coupon - Platform Web Test`,
     html: `
@@ -58,10 +56,8 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
         <div style="background: white; padding: 30px; border-radius: 15px;
           margin-top: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
           <p style="color: #666; line-height: 1.6;">
-            
             Type De Coupon: ${couponData.type}<br>
             Montant du Coupon: ${couponData.montant} ${couponData.devise}<br>
-         
           </p>
           ${generateCodesSection()}
         </div>
