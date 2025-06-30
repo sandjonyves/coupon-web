@@ -56,7 +56,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password, expoPushToken } = req.body;
-
+    
     // Validate input
     if (!username || !password) {
       return res.status(400).json({
