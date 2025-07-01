@@ -35,7 +35,7 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
       codes.push(`
         <div style="display: flex; justify-content: space-between; align-items: center;
              padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; margin-bottom: 8px; background: #f8f9fa;">
-          <div><strong style="color: #555;">Code ${i + 1}:</strong> ${value}</div>
+          <div><strong style="color: #555;">Code ${i + 1}:</strong></div>
           <div><span style="color: ${color}; font-weight: bold;">${status}</span></div>
         </div>
       `);
