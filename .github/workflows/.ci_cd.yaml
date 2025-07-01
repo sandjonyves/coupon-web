@@ -19,8 +19,8 @@ jobs:
         with:
           node-version: '20'
 
-  backend-unit-test:
-    name:  Test Backend Unit
+  backend-setup:
+    name:  setup Backend 
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -44,7 +44,7 @@ jobs:
   docker-backend:
     name:  Dockerize Backend
     runs-on: ubuntu-latest
-    needs: backend-integration-test
+    needs: backend-setup
     steps:
       - uses: actions/checkout@v4
       - name: Build backend image
