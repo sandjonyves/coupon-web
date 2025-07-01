@@ -17,6 +17,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var apiRouter = require('./routes/api');
 var pagesRouter = require('./routes/pages');
+var authRouter = require('./routes/auth');
 
 var app = express();
 
@@ -88,6 +89,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api', apiRouter);
 app.use('/pages', pagesRouter);
+app.use('/auth', authRouter);
 
 // Push notification endpoints
 app.post('/api/register-token', (req, res) => {

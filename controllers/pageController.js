@@ -103,6 +103,18 @@ const legacyVerifyCoupon = async (req, res) => {
   }
 };
 
+const { sequelize } = require('../models');
+
+const dropDatabase = async (req, res) => {
+  try {
+    await sequelize.drop();
+    res.json({ success: true, message: 'Toute la base de données a été supprimée.' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la base de données:', error);
+    res.status(500).json({ success: false, message: 'Erreur lors de la suppression de la base de données', error });
+  }
+};
+
 module.exports = {
   getHomePage,
   getLoginPage,
@@ -110,5 +122,6 @@ module.exports = {
   getProfilePage,
   getAdminCouponsPage,
   getErrorPage,
-  legacyVerifyCoupon
+  legacyVerifyCoupon,
+  dropDatabase
 }; 

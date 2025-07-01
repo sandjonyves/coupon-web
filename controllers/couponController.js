@@ -561,6 +561,16 @@ const invalidateCoupon = async (req, res) => {
   }
 };
 
+const deleteAllCoupons = async (req, res) => {
+  try {
+    await Coupon.destroy({ where: {} });
+    res.json({ success: true, message: 'Tous les coupons ont été supprimés.' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression des coupons:', error);
+    res.status(500).json({ success: false, message: 'Erreur lors de la suppression des coupons', error });
+  }
+};
+
 module.exports = {
   getAllCoupons,
   getCouponById,
@@ -573,4 +583,5 @@ module.exports = {
   validateCoupon,
   invalidateCoupon,
   getPendingCoupons,
+  deleteAllCoupons,
 }; 

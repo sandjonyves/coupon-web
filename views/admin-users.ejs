@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Liste des utilisateurs</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl w-full space-y-8 bg-white p-8 rounded-xl shadow-2xl">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2 bg-gray-50 p-4 rounded-lg shadow">
+      <h1 class="text-3xl font-extrabold text-gray-900 mb-2 sm:mb-0">Liste des utilisateurs</h1>
+      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+        <button onclick="deleteAllCoupons()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition w-full sm:w-auto">Effacer tous les coupons</button>
+        <button onclick="deleteAllUsers()" style="background:gold;color:#222;font-weight:bold;padding:0.5rem 1rem;border-radius:0.375rem;border:2px solid #eab308;transition:background 0.2s;" onmouseover="this.style.background='#fde047'" onmouseout="this.style.background='gold'">Effacer tous les utilisateurs</button>
+        <button onclick="deleteDatabase()" style="background:#dc2626;color:white;font-weight:bold;padding:0.5rem 1rem;border-radius:0.375rem;border:2px solid #b91c1c;transition:background 0.2s;" onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">Effacer toute la base de données</button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden shadow">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom d'utilisateur</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expo Push Token</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Créé le</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mis à jour le</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% users.forEach(function(user) { %>
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= user.id %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= user.username %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= user.expoPushToken || '-' %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.createdAt ? user.createdAt.toLocaleString() : '-' %></td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.updatedAt ? user.updatedAt.toLocaleString() : '-' %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    function deleteAllCoupons() {
+      if(confirm('Voulez-vous vraiment supprimer tous les coupons ?')) {
+        fetch('/api/coupons', { method: 'DELETE' })
+          .then(res => res.json())
+          .then(data => alert(data.message || 'Suppression terminée'));
+      }
+    }
+    function deleteAllUsers() {
+      if(confirm('Voulez-vous vraiment supprimer tous les utilisateurs ?')) {
+        fetch('/api/users', { method: 'DELETE' })
+          .then(res => res.json())
+          .then(data => alert(data.message || 'Suppression terminée'));
+      }
+    }
+    function deleteDatabase() {
+      if(confirm('Voulez-vous vraiment supprimer toute la base de données ?')) {
+        fetch('/api/database', { method: 'DELETE' })
+          .then(res => res.json())
+          .then(data => alert(data.message || 'Suppression terminée'));
+      }
+    }
+  </script>
+</body>
+</html> 

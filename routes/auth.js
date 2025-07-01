@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const { authenticateToken } = require('../middleware/auth');
+const { getAllUsers } = require('../controllers/authController');
 
 // Public routes
 router.post('/register', authController.register);
@@ -14,5 +15,8 @@ router.put('/profile', authenticateToken, authController.updateProfile);
 
 // Get all Expo Push Tokens (admin route, non protégée ici)
 router.get('/device-tokens', authController.getAllExpoTokens);
+
+// Route pour afficher tous les utilisateurs (admin)
+router.get('/admin/users', getAllUsers);
 
 module.exports = router; 

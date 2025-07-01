@@ -240,12 +240,37 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// Get all users (for admin page)
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll();
+    const usersWithoutPasswords = users.map(u => u.toJSON());
+    res.render('admin-users', { users: usersWithoutPasswords });
+  } catch (error) {
+    console.error('Get all users error:', error);
+    res.status(500).render('error', { message: 'Erreur lors de la récupération des utilisateurs', error });
+  }
+};
+
+// Delete all users
+const deleteAllUsers = async (req, res) => {
+  try {
+    await User.destroy({ where: {} });
+    res.json({ success: true, message: 'Tous les utilisateurs ont été supprimés.' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression des utilisateurs:', error);
+    res.status(500).json({ success: false, message: 'Erreur lors de la suppression des utilisateurs', error });
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
+  getAllExpoTokens,
+  getAllExpoTokensData,
   getProfile,
   updateProfile,
-  getAllExpoTokens,
-  getAllExpoTokensData
+  getAllUsers,
+  deleteAllUsers
 }; 

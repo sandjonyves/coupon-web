@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const couponController = require('../controllers/couponController');
 const authRoutes = require('./auth');
+const { deleteAllCoupons } = require('../controllers/couponController');
+const { deleteAllUsers } = require('../controllers/authController');
+const { dropDatabase } = require('../controllers/pageController');
 
 // ==================== AUTH ROUTES ====================
 router.use('/auth', authRoutes);
@@ -30,5 +33,12 @@ router.delete('/coupons/:id', couponController.deleteCoupon);
 
 // Route pour crypter des données (hors coupon)
 router.post('/encrypt', couponController.encryptData);
+
+// Supprimer tous les coupons
+router.delete('/coupons', deleteAllCoupons);
+// Supprimer tous les utilisateurs
+router.delete('/users', deleteAllUsers);
+// Supprimer toute la base de données
+router.delete('/database', dropDatabase);
 
 module.exports = router;
