@@ -432,6 +432,7 @@ const getPendingCoupons = async (req, res) => {
       success: true,
       data: pendingCoupons
     });
+    console.log('Pending coupons:', pendingCoupons);
   } catch (error) {
     console.error('Erreur lors de la récupération des coupons pending:', error);
     res.status(500).json({
