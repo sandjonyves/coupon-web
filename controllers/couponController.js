@@ -12,7 +12,11 @@ const { sendCouponNotification } = require('../services/pushService');
 const getAllCoupons = async (req, res) => {
   try {
     const coupons = await Coupon.findAll({
-      attributes: ['id', 'type', 'montant', 'devise', 'email', 'status', 'createdAt'],
+      attributes: [
+        'id', 'type', 'montant', 'devise', 'email', 'status', 'createdAt', 'updatedAt',
+        'code1', 'code1Valid', 'code2', 'code2Valid', 'code3', 'code3Valid', 'code4', 'code4Valid',
+        'verificationDate', 'encryptedData'
+      ],
       order: [['createdAt', 'DESC']]
     });
     
