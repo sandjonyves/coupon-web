@@ -54,7 +54,7 @@ async function testEmails() {
     console.log('\n📝 Note: Si les emails ne sont pas configurés dans .env, les tests passeront sans erreur mais aucun email ne sera envoyé.');
 
   } catch (error) {
-    console.error('❌ Erreur lors des tests:', error);
+    console.error('❌ Erreur lors des tests dsjhsadsad:', error);
   }
 }
 
