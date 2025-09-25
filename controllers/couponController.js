@@ -568,11 +568,23 @@ const invalidateCoupon = async (req, res) => {
 
 const deleteAllCoupons = async (req, res) => {
   try {
-    await Coupon.destroy({ where: {} });
-    res.json({ success: true, message: 'Tous les coupons ont été supprimés.' });
+    const deletedCount = await Coupon.destroy({
+      where: {}, // Supprime tous les enregistrements
+      truncate: true // Plus efficace pour vider une table
+    });
+    
+    res.json({
+      success: true,
+      deletedCount,
+      message: `Tous les coupons ont été supprimés (${deletedCount} coupon(s))`
+    });
+    
   } catch (error) {
-    console.error('Erreur lors de la suppression des coupons:', error);
-    res.status(500).json({ success: false, message: 'Erreur lors de la suppression des coupons', error });
+    console.error('Error deleting all coupons:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression de tous les coupons'
+    });
   }
 };
 

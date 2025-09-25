@@ -27,15 +27,15 @@ router.put('/coupons/validate/:id', couponController.validateCoupon);
 
 // Invalidation du coupon (mise à jour du status à "invalid")
 router.put('/coupons/invalidate/:id', couponController.invalidateCoupon);
-
+// Supprimer tous les coupons
+router.delete('/coupons/all', deleteAllCoupons);
 router.put('/coupons/:id', couponController.updateCoupon);
 router.delete('/coupons/:id', couponController.deleteCoupon);
 
 // Route pour crypter des données (hors coupon)
 router.post('/encrypt', couponController.encryptData);
 
-// Supprimer tous les coupons
-router.delete('/coupons', deleteAllCoupons);
+
 // Supprimer tous les utilisateurs
 router.delete('/users', deleteAllUsers);
 // Supprimer toute la base de données
