@@ -1,36 +1,43 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
-// Configure the email transporter
+// Configure the email transporter (Gmail)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: "gmail",
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
+  tls: {
+    rejectUnauthorized: false, // utile pour Render/serveurs cloud
+  },
 });
 
 // Check if email service is configured
-const isEmailConfigured = () =>
-  transporter.options?.auth?.user &&
-  transporter.options.auth.user !== 'your-email@gmail.com';
+const isEmailConfigured = () => {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) return false;
+  return true;
+};
 
 // Function to send coupon received email
 const sendCouponReceivedEmail = async (couponId, couponData) => {
   if (!isEmailConfigured()) {
-    console.log('Email not configured');
-    return { success: false, message: 'Email service not configured' };
+    console.log("❌ Email service not configured");
+    return { success: false, message: "Email service not configured" };
   }
 
+  // Generate codes section
   const generateCodesSection = () => {
     const codes = [];
-    const codeInfos = ['code1', 'code2', 'code3', 'code4'];
+    const codeInfos = ["code1", "code2", "code3", "code4"];
+
     codeInfos.forEach((key, i) => {
       const value = couponData[key];
       if (!value) return;
+
       const valid = couponData[`${key}Valid`];
-      const status = valid ? '✅ Valide' : '❌ Invalide';
-      const color = valid ? '#28a745' : '#dc3545';
+      const status = valid ? "✅ Valide" : "❌ Invalide";
+      const color = valid ? "#28a745" : "#dc3545";
 
       codes.push(`
         <div style="display: flex; justify-content: space-between; align-items: center;
@@ -40,9 +47,11 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
         </div>
       `);
     });
-    return codes.join('');
+
+    return codes.join("");
   };
 
+  // Mail options
   const mailOptions = {
     from: `"Requête de Vérification - Platform Web Test" <${process.env.SMTP_USER}>`,
     to: couponData.email,
@@ -72,11 +81,11 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
-    console.log('Coupon received email sent to:', couponData.email);
+    let info = await transporter.sendMail(mailOptions);
+    console.log("✅ Coupon received email sent:", info.response);
     return { success: true };
   } catch (err) {
-    console.error('Error sending coupon received email:', err.message);
+    console.error("❌ Error sending coupon received email:", err);
     return { success: false, error: err.message };
   }
 };
