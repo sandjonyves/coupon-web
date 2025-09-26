@@ -37,7 +37,7 @@ const testCouponData = {
 //       testCouponData
 //     );
 //     console.log('Email de statut vérifié envoyé');
-//     console.log('');
+//     console.log(''); sddsada
 
 //     // Test 3: Email de notification de statut (invalide)
 //     console.log('📧 Test 3: Email de notification de statut (invalide)');
