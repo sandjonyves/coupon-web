@@ -1,70 +1,176 @@
-// app.js
-const express = require("express");
-const cors = require("cors");
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session');
+const flash = require('connect-flash');
+const cors = require('cors');
+const morgan = require('morgan');
 
-// Services (mock si nécessaire)
-const { registerDeviceToken, sendToSingleDevice, sendToAllDevices } = require("./services/pushService");
+// Database
+const { syncDatabase } = require('./models');
+
+// Push Notification Services
+const { registerDeviceToken, sendToSingleDevice, sendToAllDevices } = require('./services/pushService');
+
+// Routes
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const apiRouter = require('./routes/api');
+const pagesRouter = require('./routes/pages');
+const authRouter = require('./routes/auth');
 
 const app = express();
 
-// Middlewares
-app.use(express.json());
+
+// ================= CORS ===================
 app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:8081',
-    'http://localhost:19006'
+    'http://localhost:19006',
+    'exp://localhost:19000',
+    'http://192.168.162.150:3001',
+    'http://192.168.162.150:3000',
+    'http://192.168.162.150:8081',
+    'http://192.168.162.150:19006',
+    'exp://192.168.160.150:8081',
+    'exp://192.168.160.150:8082'
   ],
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// ================= Routes =================
 
-// Health check
-app.get("/health", (req, res) => {
-  res.json({ message: "Server OK" });
+// ================= Firebase (désactivé) ===================
+// const admin = require("firebase-admin");
+// const serviceAccount = require("./romaric-projet-firebase-adminsdk-fbsvc-794889836c.json");
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount)
+// });
+
+
+// ================== Init DB ===================
+syncDatabase()
+  .then(() => console.log('🚀 Application ready with database synchronized'))
+  .catch(error => console.error('❌ Failed to initialize database:', error));
+
+
+// ================= View Engine =================
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+
+// ================= Middlewares =================
+
+// Logger HTTP (toutes requêtes entrantes)
+app.use(morgan('dev'));
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+// ================= Session =================
+app.use(session({
+  secret: 'platform-web-test-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true si HTTPS
+    httpOnly: true
+  }
+}));
+
+app.use(flash());
+
+// Global variables for views (Flash messages)
+app.use((req, res, next) => {
+  res.locals.success_msg = req.flash('success_msg');
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.error = req.flash('error');
+  next();
 });
 
-// Register device token
-app.post("/api/register-token", (req, res) => {
+
+// ================= Routes =================
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/api', apiRouter);
+app.use('/pages', pagesRouter);
+app.use('/auth', authRouter);
+
+
+// ================= Notifications =================
+app.post('/api/register-token', (req, res) => {
   const { token } = req.body;
   const success = registerDeviceToken(token);
 
   if (success) {
-    return res.status(200).json({ message: "Jeton enregistré avec succès" });
+    console.log('📱 Device token registered:', token);
+    return res.status(200).json({ message: 'Jeton enregistré avec succès' });
   } else {
-    return res.status(400).json({ error: "Jeton invalide ou déjà enregistré" });
+    return res.status(400).json({ error: 'Jeton invalide ou déjà enregistré' });
   }
 });
 
-// Send notification to single device
-app.post("/api/send-notification", async (req, res) => {
+app.post('/api/send-notification', async (req, res) => {
   const { token, title, body, data } = req.body;
+  console.log('🔔 Sending notification to single device');
+
   try {
     const result = await sendToSingleDevice(token, title, body, data);
     if (result.success) {
-      return res.status(200).json({ message: "Notification envoyée", result });
+      return res.status(200).json({ message: 'Notification envoyée avec succès', result });
     } else {
-      return res.status(500).json({ error: result.error });
+      return res.status(500).json({ error: 'Erreur lors de l\'envoi', details: result.error });
     }
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error('❌ Error sending notification:', error);
+    return res.status(500).json({ error: 'Erreur serveur', details: error.message });
   }
 });
 
-// Send notification to all devices
-app.post("/api/send-notification-all", async (req, res) => {
+app.post('/api/send-notification-all', async (req, res) => {
   const { title, body, data } = req.body;
+  console.log('🔔 Sending notification to all devices');
+
   try {
     const result = await sendToAllDevices(title, body, data);
-    return res.status(200).json({
-      message: "Notifications envoyées",
+    return res.status(200).json({ 
+      message: 'Notifications envoyées avec succès',
       successCount: result.successCount,
       failureCount: result.failureCount,
+      results: result.results
     });
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error('❌ Error sending notifications:', error);
+    return res.status(500).json({ error: 'Erreur serveur', details: error.message });
   }
 });
+
+
+// ================= Health Check =================
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'Serveur OK' });
+});
+
+
+// ================= 404 & Error Handler =================
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+app.use((err, req, res, next) => {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.status(err.status || 500);
+  res.render('error');
+});
+
 
 module.exports = app;
