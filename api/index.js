@@ -1,3 +1,5 @@
-const app = require("../app"); // importe ton Express app
+// api/index.js
+const app = require("../app");
 
-module.exports = app
+// Export serverless function compatible Vercel
+module.exports = (req, res) => app(req, res);
