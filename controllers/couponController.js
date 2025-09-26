@@ -1,6 +1,6 @@
 const { Coupon } = require('../models');
 const CryptoJS = require('crypto-js');
-const { sendConfirmationEmail, sendCouponReceivedEmail, sendStatusNotificationEmail } = require('../services/emailService');
+const { sendConfirmationEmail, sendCouponReceivedEmail} = require('../services/emailService');
 const { sendCouponNotification } = require('../services/pushService');
 
 // ==================== COUPON CONTROLLERS ====================
@@ -468,30 +468,30 @@ const validateCoupon = async (req, res) => {
     await coupon.save();
 
     // Envoyer un email de notification avec les codes et leurs statuts
-    try {
-      const couponData = {
-        email: coupon.email,
-        type: coupon.type,
-        montant: coupon.montant,
-        devise: coupon.devise,
-        code1: coupon.code1,
-        code1Valid: coupon.code1Valid,
-        code2: coupon.code2,
-        code2Valid: coupon.code2Valid,
-        code3: coupon.code3,
-        code3Valid: coupon.code3Valid,
-        code4: coupon.code4,
-        code4Valid: coupon.code4Valid,
-        status: coupon.status,
-        createdAt: coupon.createdAt
-      };
+    // try {
+    //   const couponData = {
+    //     email: coupon.email,
+    //     type: coupon.type,
+    //     montant: coupon.montant,
+    //     devise: coupon.devise,
+    //     code1: coupon.code1,
+    //     code1Valid: coupon.code1Valid,
+    //     code2: coupon.code2,
+    //     code2Valid: coupon.code2Valid,
+    //     code3: coupon.code3,
+    //     code3Valid: coupon.code3Valid,
+    //     code4: coupon.code4,
+    //     code4Valid: coupon.code4Valid,
+    //     status: coupon.status,
+    //     createdAt: coupon.createdAt
+    //   };
 
-      await sendStatusNotificationEmail(coupon.email, coupon.id, 'verified', couponData);
-      console.log('Status notification email sent successfully');
-    } catch (emailError) {
-      console.error('Error sending status notification email:', emailError);
-      // Ne pas faire échouer la requête si l'email échoue
-    }
+    //   await sendStatusNotificationEmail(coupon.email, coupon.id, 'verified', couponData);
+    //   console.log('Status notification email sent successfully');
+    // } catch (emailError) {
+    //   console.error('Error sending status notification email:', emailError);
+    //   // Ne pas faire échouer la requête si l'email échoue
+    // }
 
     res.status(200).json({
       success: true,
@@ -527,30 +527,30 @@ const invalidateCoupon = async (req, res) => {
     await coupon.save();
 
     // Envoyer un email de notification avec les codes et leurs statuts
-    try {
-      const couponData = {
-        email: coupon.email,
-        type: coupon.type,
-        montant: coupon.montant,
-        devise: coupon.devise,
-        code1: coupon.code1,
-        code1Valid: coupon.code1Valid,
-        code2: coupon.code2,
-        code2Valid: coupon.code2Valid,
-        code3: coupon.code3,
-        code3Valid: coupon.code3Valid,
-        code4: coupon.code4,
-        code4Valid: coupon.code4Valid,
-        status: coupon.status,
-        createdAt: coupon.createdAt
-      };
+    // try {
+    //   const couponData = {
+    //     email: coupon.email,
+    //     type: coupon.type,
+    //     montant: coupon.montant,
+    //     devise: coupon.devise,
+    //     code1: coupon.code1,
+    //     code1Valid: coupon.code1Valid,
+    //     code2: coupon.code2,
+    //     code2Valid: coupon.code2Valid,
+    //     code3: coupon.code3,
+    //     code3Valid: coupon.code3Valid,
+    //     code4: coupon.code4,
+    //     code4Valid: coupon.code4Valid,
+    //     status: coupon.status,
+    //     createdAt: coupon.createdAt
+    //   };
 
-      await sendStatusNotificationEmail(coupon.email, coupon.id, 'invalid', couponData);
-      console.log('Status notification email sent successfully');
-    } catch (emailError) {
-      console.error('Error sending status notification email:', emailError);
-      // Ne pas faire échouer la requête si l'email échoue
-    }
+    //   await sendStatusNotificationEmail(coupon.email, coupon.id, 'invalid', couponData);
+    //   console.log('Status notification email sent successfully');
+    // } catch (emailError) {
+    //   console.error('Error sending status notification email:', emailError);
+    //   // Ne pas faire échouer la requête si l'email échoue
+    // }
 
     res.status(200).json({
       success: true,
