@@ -26,21 +26,10 @@ const app = express();
 
 // ================= CORS ===================
 app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:8081',
-    'http://localhost:19006',
-    'exp://localhost:19000',
-    'http://192.168.162.150:3001',
-    'http://192.168.162.150:3000',
-    'http://192.168.162.150:8081',
-    'http://192.168.162.150:19006',
-    'exp://192.168.160.150:8081',
-    'exp://192.168.160.150:8082'
-  ],
+  origin: '*',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  // methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  // allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 
