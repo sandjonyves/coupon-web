@@ -3,17 +3,18 @@ require('dotenv').config();
 
 // Configure the email transporter
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "gmail.SMTP_SERVICE",
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.SMTP_USER, // email validé dans Brevo
+    pass: process.env.SMTP_PASS, // clé SMTP générée dans Brevo
   },
-});
+})
 
 // Check if email service is configured
-const isEmailConfigured = () =>
-  transporter.options?.auth?.user &&
-  transporter.options.auth.user !== 'your-email@gmail.com';
+const isEmailConfigured = () => transporter.options?.auth?.user && transporter.options?.auth?.pass;
+
 
 // Function to send coupon received email
 const sendCouponReceivedEmail = async (couponId, couponData) => {
