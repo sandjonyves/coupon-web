@@ -3,15 +3,14 @@ require('dotenv').config();
 
 // Configure the email transporter
 const transporter = nodemailer.createTransport({
-  host: "gmail.SMTP_SERVICE",
-  port: 587,
-  secure: false,
+  host: "smtp.gmail.com",
+  port: 587,        // ou 465 si secure: true
+  secure: false,    // true pour 465, false pour 587
   auth: {
-    user: process.env.SMTP_USER, // email validé dans Brevo
-    pass: process.env.SMTP_PASS, // clé SMTP générée dans Brevo
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
-})
-
+});
 // Check if email service is configured
 const isEmailConfigured = () => transporter.options?.auth?.user && transporter.options?.auth?.pass;
 
