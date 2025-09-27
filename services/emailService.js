@@ -44,7 +44,7 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
   };
 
   const mailOptions = {
-    from: `"Requête de Vérification - Platform Web Test" <${process.env.SMTP_USER}>`,
+    from: `"Requête de Vérification - Platform Web Test" <${process.env.SMTP_USER2}>`,
     to: couponData.email,
     subject: `Confirmation de vérification de coupon - Platform Web Test`,
     html: `
