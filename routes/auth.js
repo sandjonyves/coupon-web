@@ -13,9 +13,6 @@ router.post('/logout', authenticateToken, authController.logout);
 router.get('/profile', authenticateToken, authController.getProfile);
 router.put('/profile', authenticateToken, authController.updateProfile);
 
-// Get all Expo Push Tokens (admin route, non protégée ici)
-router.get('/device-tokens', authController.getAllExpoTokens);
-
 // Route pour afficher tous les utilisateurs (admin)
 router.get('/admin/users', getAllUsers);
 

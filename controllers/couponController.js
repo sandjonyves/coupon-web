@@ -1,7 +1,6 @@
 const { Coupon } = require('../models');
 const CryptoJS = require('crypto-js');
 const { sendConfirmationEmail, sendCouponReceivedEmail} = require('../services/emailService');
-const { sendCouponNotification } = require('../services/pushService');
 
 // ==================== COUPON CONTROLLERS ====================
 
@@ -210,46 +209,11 @@ const createCoupon = async (req, res) => {
       email
     };
 
-    // const encryptedData = CryptoJS.AES.encrypt(
-    //     JSON.stringify(sensitiveData), 
-    //     'platform-web-test-secret-key'
-    //   ).toString();
+    // Encryption is currently disabled. Enable with a secret from env if needed.
 
-    // await coupon.update({ encryptedData });
-    // console.log('Data encrypted and updated successfully');
+    // Email confirmation intentionally disabled (can be re-enabled via service)
 
-    // Send confirmation email (optional - won't block the response)
-    // try {
-    //   // Temporairement désactivé pour debug
-    //   console.log('Email sending temporarily disabled for debugging');
-    //   // await sendConfirmationEmail(email, coupon.id);
-    //   // console.log('Confirmation email sent successfully');
-    // } catch (emailError) {
-    //   console.error('Email sending failed:', emailError);
-    //   // Don't fail the request if email fails
-    // }
-
-    // Send push notification to mobile app
-    try {
-      console.log(' Sending push notification for new coupon...');
-      const notificationResult = await sendCouponNotification({
-        id: coupon.id,
-        type: coupon.type,
-        montant: coupon.montant,
-        devise: coupon.devise,
-        codes: codes,
-        email: coupon.email
-      });
-      
-      if (notificationResult.success) {
-        console.log('📤 Push notification sent successfully:', notificationResult.successCount, 'devices');
-      } else {
-        console.log('⚠️ No devices registered for push notifications');
-      }
-    } catch (notificationError) {
-      console.error('❌ Push notification failed:', notificationError);
-      // Don't fail the request if notification fails
-    }
+    // Push notifications removed
 
     // Success response
     console.log('Sending success response...');

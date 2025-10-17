@@ -6,50 +6,50 @@
     <title>Connexion - Romaric Project</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div>
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                Connectez-vous à votre compte
-            </h2>
-            <p class="mt-2 text-center text-sm text-gray-600">
-                Ou
-                <a href="/register" class="font-medium text-indigo-600 hover:text-indigo-500">
-                    créez un nouveau compte
-                </a>
-            </p>
-        </div>
-        
-        <form class="mt-8 space-y-6" id="loginForm">
-            <div class="rounded-md shadow-sm -space-y-px">
-                <div>
-                    <label for="username" class="sr-only">Nom d'utilisateur</label>
-                    <input id="username" name="username" type="text" required 
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
-                           placeholder="Nom d'utilisateur">
+<body class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md">
+        <div class="bg-white/80 backdrop-blur rounded-2xl shadow-xl border border-gray-100 p-8">
+            <div class="text-center">
+                <div class="mx-auto h-12 w-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M12 1.5a5.25 5.25 0 00-5.25 5.25v2.25A3.75 3.75 0 003 12.75v3.75a3.75 3.75 0 003.75 3.75h10.5A3.75 3.75 0 0021 16.5v-3.75a3.75 3.75 0 00-3.75-3.75V6.75A5.25 5.25 0 0012 1.5z"/></svg>
                 </div>
-                <div>
-                    <label for="password" class="sr-only">Mot de passe</label>
-                    <input id="password" name="password" type="password" required 
-                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" 
-                           placeholder="Mot de passe">
-                </div>
+                <h2 class="mt-6 text-2xl font-bold tracking-tight text-gray-900">Connexion</h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Pas encore de compte ?
+                    <a href="/register" class="font-medium text-indigo-600 hover:text-indigo-500">Inscription</a>
+                </p>
             </div>
 
-            <div>
-                <button type="submit" 
-                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <form class="mt-8 space-y-6" id="loginForm">
+                <div class="space-y-4">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Nom d'utilisateur</label>
+                        <input id="username" name="username" type="text" required 
+                               class="block w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2" 
+                               placeholder="Entrez votre nom d'utilisateur">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+                        <input id="password" name="password" type="password" required 
+                               class="block w-full rounded-xl border-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2" 
+                               placeholder="••••••••">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" 
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        <svg class="h-5 w-5 text-indigo-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                         </svg>
-                    </span>
-                    Se connecter
-                </button>
-            </div>
+                        Se connecter
+                    </button>
+                </div>
 
-            <div id="message" class="hidden mt-4 p-4 rounded-md"></div>
-        </form>
+                <div id="message" class="hidden mt-4 p-4 rounded-md"></div>
+            </form>
+        </div>
+        <p class="mt-6 text-center text-xs text-gray-500">© <%= new Date().getFullYear() %> Romaric Project</p>
     </div>
 
     <script src="/javascripts/auth.js"></script>

@@ -4,7 +4,7 @@ const { generateToken } = require('../middleware/auth');
 // Register a new user
 const register = async (req, res) => {
   try {
-    const { username, password, expoPushToken } = req.body;
+    const { username, password } = req.body;
 
     // Validate input
     if (!username || !password) {
@@ -26,8 +26,7 @@ const register = async (req, res) => {
     // Create new user
     const user = await User.create({
       username,
-      password,
-      expoPushToken: expoPushToken || null
+      password
     });
 
     // Generate JWT token
@@ -55,7 +54,7 @@ const register = async (req, res) => {
 // Login user
 const login = async (req, res) => {
   try {
-    const { username, password, expoPushToken } = req.body;
+    const { username, password } = req.body;
     
     // Validate input
     if (!username || !password) {
@@ -83,11 +82,7 @@ const login = async (req, res) => {
       });
     }
 
-    // Mettre à jour l'expoPushToken si fourni
-    if (expoPushToken) {
-      user.expoPushToken = expoPushToken;
-      await user.save();
-    }
+    // Expo push token removed from system
 
     // Generate JWT token
     const token = generateToken(user.id);
@@ -145,43 +140,7 @@ const logout = async (req, res) => {
   }
 };
 
-// Get all Expo Push Tokens (API endpoint)
-const getAllExpoTokens = async (req, res) => {
-  try {
-    const deviceTokens = await getAllExpoTokensData();
-    res.json({ success: true, deviceTokens });
-  } catch (error) {
-    console.error('Error in getAllExpoTokens:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erreur lors de la récupération des tokens', 
-      error: error.message 
-    });
-  }
-};
-
-// Get all Expo Push Tokens (utility function - no req/res)
-const getAllExpoTokensData = async () => {
-  try {
-    const users = await User.findAll({
-      attributes: ['expoPushToken'],
-      where: {
-        expoPushToken: {
-          [require('sequelize').Op.not]: null
-        }
-      }
-    });
-    
-    console.log('Users with expoPushToken:', users);
-    const deviceTokens = users.map(u => u.expoPushToken).filter(token => token !== null);
-    console.log('Device tokens:', deviceTokens);
-    
-    return deviceTokens;
-  } catch (error) {
-    console.error('Error in getAllExpoTokensData:', error);
-    return [];
-  }
-};
+// Expo push tokens removed
 
 // Get current user profile
 const getProfile = async (req, res) => {
@@ -202,10 +161,10 @@ const getProfile = async (req, res) => {
   }
 };
 
-// Update user profile (including expoPushToken)
+// Update user profile
 const updateProfile = async (req, res) => {
   try {
-    const { expoPushToken } = req.body;
+    const { } = req.body;
     const userId = req.user.id;
 
     const user = await User.findByPk(userId);
@@ -216,11 +175,7 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    // Update expoPushToken if provided
-    if (expoPushToken !== undefined) {
-      user.expoPushToken = expoPushToken;
-      await user.save();
-    }
+    // No profile fields to update for now
 
     res.json({
       success: true,
@@ -267,8 +222,6 @@ module.exports = {
   register,
   login,
   logout,
-  getAllExpoTokens,
-  getAllExpoTokensData,
   getProfile,
   updateProfile,
   getAllUsers,

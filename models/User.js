@@ -23,10 +23,6 @@ const User = sequelize.define('User', {
     validate: {
       len: [6, 100]
     }
-  },
-  expoPushToken: {
-    type: DataTypes.STRING,
-    allowNull: true
   }
 }, {
   tableName: 'users',
