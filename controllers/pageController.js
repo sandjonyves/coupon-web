@@ -6,7 +6,7 @@
  */
 const getNewHomePage = (req, res) => {
   res.render('home', { 
-    title: 'Neoplat.shop - Vérification de Coupons',
+    title: 'Plateform-Test.cm - Vérification de Coupons en Ligne | Cameroun',
     success_msg: req.flash('success_msg'),
     error_msg: req.flash('error_msg')
   });
@@ -18,7 +18,7 @@ const getNewHomePage = (req, res) => {
  */
 const getVerifyPage = (req, res) => {
   res.render('verify', { 
-    title: 'Vérification de Ticket - Neoplat.shop',
+    title: 'Vérification de Coupons - Plateform-Test.cm | Service Sécurisé',
     success_msg: req.flash('success_msg'),
     error_msg: req.flash('error_msg')
   });

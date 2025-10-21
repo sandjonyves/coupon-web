@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://plateform-test.cm/sitemap.xml
+
+# Disallow admin pages
+Disallow: /admin-coupons
+Disallow: /admin-users
+Disallow: /profile
+
+# Allow verification page
+Allow: /verify
+Allow: /login
+Allow: /register
+
+# Crawl delay
+Crawl-delay: 1
