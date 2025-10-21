@@ -4,8 +4,11 @@ const pageController = require('../controllers/pageController');
 
 // ==================== PAGE ROUTES ====================
 
-/* GET / - Page d'accueil */
-router.get('/', pageController.getHomePage);
+/* GET / - Page d'accueil moderne */
+router.get('/', pageController.getNewHomePage);
+
+/* GET /verify - Page de vérification */
+router.get('/verify', pageController.getVerifyPage);
 
 /* GET /login - Page de connexion */
 router.get('/login', pageController.getLoginPage);

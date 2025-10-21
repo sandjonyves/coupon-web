@@ -1,12 +1,24 @@
 // ==================== PAGE CONTROLLERS ====================
 
 /**
- * Afficher la page d'accueil
+ * Afficher la nouvelle page d'accueil moderne
  * GET /
  */
-const getHomePage = (req, res) => {
-  res.render('index', { 
-    title: 'Platform Web Test - Vérification de Coupons',
+const getNewHomePage = (req, res) => {
+  res.render('home', { 
+    title: 'Neoplat.shop - Vérification de Coupons',
+    success_msg: req.flash('success_msg'),
+    error_msg: req.flash('error_msg')
+  });
+};
+
+/**
+ * Afficher la page de vérification
+ * GET /verify
+ */
+const getVerifyPage = (req, res) => {
+  res.render('verify', { 
+    title: 'Vérification de Ticket - Neoplat.shop',
     success_msg: req.flash('success_msg'),
     error_msg: req.flash('error_msg')
   });
@@ -116,7 +128,8 @@ const dropDatabase = async (req, res) => {
 };
 
 module.exports = {
-  getHomePage,
+  getNewHomePage,
+  getVerifyPage,
   getLoginPage,
   getRegisterPage,
   getProfilePage,
