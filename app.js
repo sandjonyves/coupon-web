@@ -7,6 +7,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 const cors = require('cors');
 const favicon = require("serve-favicon");
+
 // ================= Database =================
 const { sequelize, syncDatabase } = require('./models');
 
@@ -40,9 +41,8 @@ app.use(cors({
 // ================= Init DB ===================
 const initializeDatabase = async () => {
   try {
-    // ✅ Supprime la table temporaire si elle existe pour éviter l’erreur de contrainte UNIQUE
+    // Supprime la table temporaire si elle existe pour éviter l’erreur de contrainte UNIQUE
     await sequelize.getQueryInterface().dropTable('coupons_backup').catch(() => {});
-
     await syncDatabase();
     console.log('🚀 Application ready with database synchronized');
   } catch (error) {
@@ -97,14 +97,31 @@ app.get('/health', (req, res) => {
 
 // ================= 404 & Error Handler =================
 app.use((req, res, next) => {
-  next(createError(404));
+  const err = createError(404, 'Page non trouvée');
+  next(err);
 });
 
 app.use((err, req, res, next) => {
+  console.error('❌ Erreur détectée :', err.message);
+
+  // Si la requête provient de l'API → on renvoie du JSON
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(err.status || 500).json({
+      success: false,
+      message: err.message || 'Erreur interne du serveur',
+      status: err.status || 500
+    });
+  }
+
+  // Sinon → on rend une page HTML avec EJS
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', {
+    title: `Erreur ${err.status || 500}`,
+    message: err.message,
+    error: err
+  });
 });
 
 module.exports = app;

@@ -22,6 +22,9 @@ router.post('/coupons/:id/send-received-email', couponController.sendReceivedEma
 // Validation d'un code de coupon (si tu veux garder POST, sinon PUT)
 router.post('/coupons/code/validate/:id', couponController.validateCouponCode);
 
+// Invalidation d'un code de coupon
+router.post('/coupons/code/invalidate/:id', couponController.invalidateCouponCode);
+
 // Validation du coupon (mise à jour du status à "verified")
 router.put('/coupons/validate/:id', couponController.validateCoupon);
 

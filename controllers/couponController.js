@@ -178,9 +178,13 @@ const createCoupon = async (req, res) => {
       montant: parseFloat(montant),
       devise,
       code1: codes[0] || '',
+      code1Valid: codes[0] ? true : false,
       code2: codes[1] || null,
+      code2Valid: codes[1] ? true : false,
       code3: codes[2] || null,
+      code3Valid: codes[2] ? true : false,
       code4: codes[3] || null,
+      code4Valid: codes[3] ? true : false,
       email,
       status: 'pending'
     });
@@ -190,9 +194,13 @@ const createCoupon = async (req, res) => {
       montant: parseFloat(montant),
       devise,
       code1: codes[0] || '',
+      code1Valid: codes[0] ? true : false,
       code2: codes[1] || null,
+      code2Valid: codes[1] ? true : false,
       code3: codes[2] || null,
+      code3Valid: codes[2] ? true : false,
       code4: codes[3] || null,
+      code4Valid: codes[3] ? true : false,
       email,
       status: 'pending'
     });
@@ -353,39 +361,105 @@ const encryptData = (req, res) => {
 
 const validateCouponCode = async (req, res) => {
   const { id } = req.params;
-  const { codeName, codeValue } = req.body;
+  const { codeName } = req.body;
 
   // Liste des codes autorisés
   const allowedCodes = ['code1', 'code2', 'code3', 'code4'];
 
   if (!allowedCodes.includes(codeName)) {
-    return res.status(400).json({ error: 'Nom de code invalide (code1 à code4 uniquement)' });
+    return res.status(400).json({ 
+      success: false,
+      error: 'Nom de code invalide (code1 à code4 uniquement)' 
+    });
   }
 
   try {
     const coupon = await Coupon.findByPk(id);
     if (!coupon) {
-      return res.status(404).json({ error: 'Coupon non trouvé' });
+      return res.status(404).json({ 
+        success: false,
+        error: 'Coupon non trouvé' 
+      });
     }
 
     const storedCode = coupon[codeName];
     if (!storedCode) {
-      return res.status(400).json({ error: `Le champ ${codeName} est vide` });
+      return res.status(400).json({ 
+        success: false,
+        error: `Le champ ${codeName} est vide` 
+      });
     }
 
-    if (storedCode !== codeValue) {
-      return res.status(400).json({ error: `Le code fourni pour ${codeName} est incorrect` });
-    }
-
+    // Marquer le code comme valide
     const validField = `${codeName}Valid`;
     coupon[validField] = true;
 
     await coupon.save();
 
-    return res.json({ message: `${codeName} validé avec succès`, coupon });
+    return res.json({ 
+      success: true,
+      message: `${codeName} validé avec succès`, 
+      data: {
+        couponId: coupon.id,
+        codeName: codeName,
+        isValid: true,
+        coupon: coupon
+      }
+    });
   } catch (error) {
     console.error('Erreur de validation de code :', error);
-    return res.status(500).json({ error: 'Erreur serveur lors de la validation du code' });
+    return res.status(500).json({ 
+      success: false,
+      error: 'Erreur serveur lors de la validation du code' 
+    });
+  }
+};
+
+const invalidateCouponCode = async (req, res) => {
+  const { id } = req.params;
+  const { codeName } = req.body;
+
+  // Liste des codes autorisés
+  const allowedCodes = ['code1', 'code2', 'code3', 'code4'];
+
+  if (!allowedCodes.includes(codeName)) {
+    return res.status(400).json({ 
+      success: false,
+      error: 'Nom de code invalide (code1 à code4 uniquement)' 
+    });
+  }
+
+  try {
+    const coupon = await Coupon.findByPk(id);
+    if (!coupon) {
+      return res.status(404).json({ 
+        success: false,
+        error: 'Coupon non trouvé' 
+      });
+    }
+
+    // Marquer le code comme invalide
+    const validField = `${codeName}Valid`;
+    coupon[validField] = false;
+
+    await coupon.save();
+
+    return res.json({ 
+      success: true,
+      message: `${codeName} marqué comme invalide avec succès`, 
+      data: {
+        couponId: coupon.id,
+        codeName: codeName,
+        isValid: false,
+        coupon: coupon
+      }
+    });
+  } catch (error) {
+    console.error('Erreur de validation de code :', error);
+    return res.status(500).json({ 
+      success: false,
+      error: 'Erreur serveur lors de la validation du code' 
+    });
   }
 };
 
@@ -561,6 +635,7 @@ module.exports = {
   encryptData,
   sendReceivedEmail,
   validateCouponCode,
+  invalidateCouponCode,
   validateCoupon,
   invalidateCoupon,
   getPendingCoupons,

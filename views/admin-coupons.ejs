@@ -187,6 +187,18 @@
                                                 <span class="text-xs ${coupon.code1Valid ? 'text-green-600' : 'text-red-600'}">
                                                     ${coupon.code1Valid ? '✅' : '❌'}
                                                 </span>
+                                                ${coupon.code1 ? `
+                                                <div class="flex space-x-1">
+                                                    <button onclick="validateCode(${coupon.id}, 'code1')" 
+                                                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition">
+                                                        ✓ Valider
+                                                    </button>
+                                                    <button onclick="invalidateCode(${coupon.id}, 'code1')" 
+                                                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition">
+                                                        ✗ Rejeter
+                                                    </button>
+                                                </div>
+                                                ` : ''}
                                             </div>
                                         </div>
                                         ${coupon.code2 ? `
@@ -197,6 +209,16 @@
                                                 <span class="text-xs ${coupon.code2Valid ? 'text-green-600' : 'text-red-600'}">
                                                     ${coupon.code2Valid ? '✅' : '❌'}
                                                 </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="validateCode(${coupon.id}, 'code2')" 
+                                                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition">
+                                                        ✓ Valider
+                                                    </button>
+                                                    <button onclick="invalidateCode(${coupon.id}, 'code2')" 
+                                                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition">
+                                                        ✗ Rejeter
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                         ` : ''}
@@ -208,6 +230,16 @@
                                                 <span class="text-xs ${coupon.code3Valid ? 'text-green-600' : 'text-red-600'}">
                                                     ${coupon.code3Valid ? '✅' : '❌'}
                                                 </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="validateCode(${coupon.id}, 'code3')" 
+                                                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition">
+                                                        ✓ Valider
+                                                    </button>
+                                                    <button onclick="invalidateCode(${coupon.id}, 'code3')" 
+                                                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition">
+                                                        ✗ Rejeter
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                         ` : ''}
@@ -219,6 +251,16 @@
                                                 <span class="text-xs ${coupon.code4Valid ? 'text-green-600' : 'text-red-600'}">
                                                     ${coupon.code4Valid ? '✅' : '❌'}
                                                 </span>
+                                                <div class="flex space-x-1">
+                                                    <button onclick="validateCode(${coupon.id}, 'code4')" 
+                                                            class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition">
+                                                        ✓ Valider
+                                                    </button>
+                                                    <button onclick="invalidateCode(${coupon.id}, 'code4')" 
+                                                            class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition">
+                                                        ✗ Rejeter
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                         ` : ''}
@@ -422,6 +464,59 @@
                 }
             }
         });
+
+        async function validateCode(couponId, codeName) {
+            try {
+                const response = await fetch(`/api/coupons/code/validate/${couponId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        codeName: codeName,
+                        codeValue: 'dummy' // Pas utilisé dans la nouvelle logique
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.message) {
+                    showMessage(`${codeName} validé avec succès`, true);
+                    // Recharger la page pour voir les changements
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage(`Erreur: ${data.error}`, false);
+                }
+            } catch (error) {
+                console.error('Error validating code:', error);
+                showMessage('Erreur lors de la validation du code', false);
+            }
+        }
+
+        async function invalidateCode(couponId, codeName) {
+            try {
+                const response = await fetch(`/api/coupons/code/invalidate/${couponId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ codeName: codeName })
+                });
+                
+                const data = await response.json();
+                
+                if (data.message) {
+                    showMessage(`${codeName} marqué comme invalide`, true);
+                    // Recharger la page pour voir les changements
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage(`Erreur: ${data.error}`, false);
+                }
+            } catch (error) {
+                console.error('Error invalidating code:', error);
+                showMessage('Erreur lors de l\'invalidation du code', false);
+            }
+        }
 
         async function sendReceivedEmail(couponId) {
             try {
