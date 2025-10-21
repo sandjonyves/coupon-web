@@ -30,6 +30,7 @@
     "pg": "^8.16.3",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.3",
+    "serve-favicon": "^2.5.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {

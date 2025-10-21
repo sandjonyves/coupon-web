@@ -6,7 +6,7 @@ const logger = require('morgan');
 const session = require('express-session');
 const flash = require('connect-flash');
 const cors = require('cors');
-
+const favicon = require("serve-favicon");
 // ================= Database =================
 const { sequelize, syncDatabase } = require('./models');
 
@@ -60,6 +60,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(favicon(path.join(__dirname, "public", "images", "logo.png")));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ================= Session =================
