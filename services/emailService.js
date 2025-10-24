@@ -17,7 +17,7 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
     }
 
     // ✅ Utiliser une adresse d’expéditeur liée à ton domaine vérifié SendGrid
-    const FROM_EMAIL = 'contact@plateform-test.cm'; // PAS Gmail ⚠️
+    const FROM_EMAIL = process.env.SMTP_USER // PAS Gmail ⚠️
 
     const generateCodesSection = () => {
       const codes = [];
