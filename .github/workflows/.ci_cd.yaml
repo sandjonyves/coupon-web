@@ -38,6 +38,8 @@ jobs:
           echo "SMTP_USER=${{ secrets.SMTP_USER }}" >> .env
           echo "SMTP_PASS=${{ secrets.SMTP_PASS }}" >> .env
           echo "PORT=3001" >> .env
+          echo "SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}" >> .env
+          echo "NODE_ENV=production" >> .env
 
 
 
