@@ -1,29 +1,26 @@
-# Dockerfile simple pour Render.com
+# Image Node officielle
 FROM node:18-slim
 
-
-
-# Créer le répertoire de travail
+# Dossier de travail
 WORKDIR /app
 
-# Copier les fichiers de dépendances
+# Copier package.json et package-lock.json
 COPY package*.json ./
 
-# Installer les dépendances
-RUN npm install --production --silent
+# Installer TOUTES les dépendances pour pouvoir build Tailwind
+RUN npm install --silent
 
-# Copier le code source
+# Copier tout le code
 COPY . .
 
-# Build CSS pour la production
+# Build Tailwind CSS
 RUN npm run build:css
 
-# Variables d'environnement
-ENV NODE_ENV=production
-ENV PORT=3000
+# Si tu veux, tu peux maintenant supprimer les devDependencies pour prod
+RUN npm prune --production
 
 # Exposer le port
 EXPOSE 3000
 
-# Script de démarrage
+# Lancer l'application
 CMD ["node", "./bin/www"]
