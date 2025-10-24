@@ -664,8 +664,8 @@
 
         async function sendReceivedEmail(couponId) {
             try {
-                const response = await fetch(`/api/coupons/validate/${couponId}`, {
-                    method: 'PUT',
+                const response = await fetch(`/api/coupons/${couponId}/send-received-email`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     }
