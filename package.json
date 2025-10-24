@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "build:css": "tailwindcss -i ./public/stylesheets/input.css -o ./public/stylesheets/style.css --watch"
+    "build": "npm run build:css",
+    "build:css": "tailwindcss -i ./public/stylesheets/input.css -o ./public/stylesheets/style.css",
+    "postinstall": "npm run build:css"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",

@@ -41,15 +41,23 @@ app.use(cors({
 // ================= Init DB ===================
 const initializeDatabase = async () => {
   try {
-    // Supprime la table temporaire si elle existe pour éviter l’erreur de contrainte UNIQUE
+    // Supprime la table temporaire si elle existe pour éviter l'erreur de contrainte UNIQUE
     await sequelize.getQueryInterface().dropTable('coupons_backup').catch(() => {});
     await syncDatabase();
     console.log('🚀 Application ready with database synchronized');
   } catch (error) {
     console.error('❌ Unable to connect to the database or sync models:', error);
+    // En production, on peut continuer sans la DB pour éviter les crashes
+    if (process.env.NODE_ENV === 'production') {
+      console.log('⚠️ Continuing without database synchronization in production');
+    }
   }
 };
-initializeDatabase();
+
+// Initialiser la DB seulement si on n'est pas en train de tester
+if (process.env.NODE_ENV !== 'test') {
+  initializeDatabase();
+}
 
 // ================= View Engine =================
 app.set('views', path.join(__dirname, 'views'));
@@ -64,15 +72,28 @@ app.use(favicon(path.join(__dirname, "public", "images", "logo.png")));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ================= Session =================
-app.use(session({
-  secret: 'platform-web-test-secret-key',
+// Configuration des sessions pour la production
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET || 'platform-web-test-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
-    httpOnly: true
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 heures
   }
-}));
+};
+
+// En production, utiliser un store de session persistant
+if (process.env.NODE_ENV === 'production') {
+  // Pour Render, on peut utiliser connect-redis ou simplement désactiver les sessions
+  // Pour l'instant, on utilise MemoryStore mais avec des avertissements supprimés
+  console.log('⚠️ Production: Using MemoryStore for sessions (consider Redis for scaling)');
+} else {
+  console.log('🔧 Development: Using MemoryStore for sessions');
+}
+
+app.use(session(sessionConfig));
 
 app.use(flash());
 
