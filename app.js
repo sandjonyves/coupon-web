@@ -19,7 +19,7 @@ const authRouter = require('./routes/auth');
 
 const app = express();
 
-// ================= CORS ===================
+// ================================= CORS =======================================
 app.use(cors({
   origin: [
     'http://localhost:3000',
