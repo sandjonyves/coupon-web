@@ -207,6 +207,56 @@ const getAllUsers = async (req, res) => {
   }
 };
 
+// Get all users via API
+const getAllUsersAPI = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      order: [['createdAt', 'DESC']]
+    });
+    const usersWithoutPasswords = users.map(u => u.toJSON());
+    
+    res.json({
+      success: true,
+      data: usersWithoutPasswords,
+      message: 'Utilisateurs récupérés avec succès'
+    });
+  } catch (error) {
+    console.error('Get all users API error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des utilisateurs'
+    });
+  }
+};
+
+// Delete a specific user
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Utilisateur non trouvé'
+      });
+    }
+
+    await user.destroy();
+    
+    res.json({
+      success: true,
+      message: 'Utilisateur supprimé avec succès'
+    });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression de l\'utilisateur'
+    });
+  }
+};
+
 // Delete all users
 const deleteAllUsers = async (req, res) => {
   try {
@@ -225,5 +275,7 @@ module.exports = {
   getProfile,
   updateProfile,
   getAllUsers,
+  getAllUsersAPI,
+  deleteUser,
   deleteAllUsers
 }; 

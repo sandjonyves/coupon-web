@@ -3,7 +3,7 @@ const router = express.Router();
 const couponController = require('../controllers/couponController');
 const authRoutes = require('./auth');
 const { deleteAllCoupons } = require('../controllers/couponController');
-const { deleteAllUsers } = require('../controllers/authController');
+const { deleteAllUsers, getAllUsersAPI, deleteUser } = require('../controllers/authController');
 const { dropDatabase } = require('../controllers/pageController');
 
 // ==================== AUTH ROUTES ====================
@@ -41,6 +41,10 @@ router.post('/encrypt', couponController.encryptData);
 
 // Supprimer tous les utilisateurs
 router.delete('/users', deleteAllUsers);
+// Récupérer tous les utilisateurs
+router.get('/users', getAllUsersAPI);
+// Supprimer un utilisateur spécifique
+router.delete('/users/:id', deleteUser);
 // Supprimer toute la base de données
 router.delete('/database', dropDatabase);
 

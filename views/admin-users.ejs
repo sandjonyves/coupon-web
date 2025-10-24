@@ -2,70 +2,395 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Liste des utilisateurs</title>
+  <title>Administration des Utilisateurs - Platform Web Test</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
   <link rel="icon" type="image/png" href="/images/logo.png" />
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23000' d='M466.5 83.7l-192-80a48.15 48.15 0 0 0-36.9 0l-192 80C27.7 91.1 16 108.6 16 128c0 198.5 114.5 335.7 221.5 380.3 11.8 4.9 25.1 4.9 36.9 0C360.1 472.6 496 349.3 496 128c0-19.4-11.7-36.9-29.5-44.3zM256.1 446.3l-.1-381L426.8 96.3c1.8.8 2.9 2.6 2.9 4.5 0 175.2-97.4 310.8-173.6 345.5z'/></svg>">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-4xl w-full space-y-8 bg-white p-8 rounded-xl shadow-2xl">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2 bg-gray-50 p-4 rounded-lg shadow">
-      <h1 class="text-3xl font-extrabold text-gray-900 mb-2 sm:mb-0">Liste des utilisateurs</h1>
-      <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-        <button onclick="deleteAllCoupons()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition w-full sm:w-auto">Effacer tous les coupons</button>
-        <button onclick="deleteAllUsers()" style="background:gold;color:#222;font-weight:bold;padding:0.5rem 1rem;border-radius:0.375rem;border:2px solid #eab308;transition:background 0.2s;" onmouseover="this.style.background='#fde047'" onmouseout="this.style.background='gold'">Effacer tous les utilisateurs</button>
-        <button onclick="deleteDatabase()" style="background:#dc2626;color:white;font-weight:bold;padding:0.5rem 1rem;border-radius:0.375rem;border:2px solid #b91c1c;transition:background 0.2s;" onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">Effacer toute la base de données</button>
+<body class="bg-gray-100 min-h-screen">
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="px-4 py-6 sm:px-0">
+      <div class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Administration des Utilisateurs</h1>
+        <div class="flex space-x-4">
+          <a href="/pages/admin-coupons" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <i class="fas fa-ticket-alt mr-2"></i>
+            Gestion Coupons
+          </a>
+          <a href="/" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+            <i class="fas fa-home mr-2"></i>
+            Accueil
+          </a>
+          <button onclick="logout()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            Déconnexion
+          </button>
+        </div>
       </div>
     </div>
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden shadow">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom d'utilisateur</th>
-            
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Créé le</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mis à jour le</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <% users.forEach(function(user) { %>
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= user.id %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><%= user.username %></td>
-              
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.createdAt ? user.createdAt.toLocaleString() : '-' %></td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><%= user.updatedAt ? user.updatedAt.toLocaleString() : '-' %></td>
-            </tr>
-          <% }); %>
-        </tbody>
-      </table>
+
+    <!-- Users List -->
+    <div class="px-4 py-6 sm:px-0">
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Liste des Utilisateurs
+              </h3>
+              <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                Gérez les utilisateurs de la plateforme.
+              </p>
+            </div>
+            <!-- Boutons d'action -->
+            <div class="flex space-x-2">
+              <button onclick="deleteAllCoupons()" 
+                      class="inline-flex items-center px-4 py-2 border border-orange-300 text-sm font-medium rounded-md text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition">
+                <i class="fas fa-ticket-alt mr-2"></i>
+                Effacer Coupons
+              </button>
+              <button onclick="deleteAllUsers()" 
+                      class="inline-flex items-center px-4 py-2 border border-yellow-300 text-sm font-medium rounded-md text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition">
+                <i class="fas fa-users mr-2"></i>
+                Effacer Utilisateurs
+              </button>
+              <button onclick="deleteDatabase()" 
+                      class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
+                <i class="fas fa-database mr-2"></i>
+                Effacer BDD
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="border-t border-gray-200">
+          <div id="usersList" class="divide-y divide-gray-200">
+            <div class="p-4 text-center text-gray-500">
+              Chargement des utilisateurs...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div id="message" class="hidden mt-4 p-4 rounded-md"></div>
+  </div>
+
+  <!-- Modal de Confirmation -->
+  <div id="confirmationModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+    <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm transition-opacity"></div>
+    
+    <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+      <div class="relative transform overflow-hidden rounded-2xl bg-white px-8 pb-8 pt-6 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-lg">
+          <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+        </div>
+        
+        <div class="mt-6 text-center">
+          <h3 class="text-xl font-bold text-gray-900 mb-3" id="modalTitle">Confirmer la suppression</h3>
+          <div class="mb-8">
+            <p class="text-gray-600 leading-relaxed" id="modalMessage">
+              Cette action est irréversible. Êtes-vous sûr de vouloir continuer ?
+            </p>
+          </div>
+          
+          <div class="flex flex-col-reverse sm:flex-row sm:justify-center gap-3">
+            <button id="cancelButton" onclick="closeModal()"
+                    class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-all duration-200 shadow-sm">
+              <i class="fas fa-times mr-2"></i>
+              Annuler
+            </button>
+            <button id="confirmButton" 
+                    class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+              <i class="fas fa-trash-alt mr-2"></i>
+              Supprimer
+            </button>
+          </div>
+        </div>
+        
+        <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
     </div>
   </div>
+
+  <script src="/javascripts/auth.js"></script>
   <script>
-    function deleteAllCoupons() {
-      if(confirm('Voulez-vous vraiment supprimer tous les coupons ?')) {
-        fetch('/api/coupons', { method: 'DELETE' })
-          .then(res => res.json())
-          .then(data => alert(data.message || 'Suppression terminée'));
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!window.authManager.isAuthenticated()) {
+        window.location.href = '/login';
+        return;
+      }
+      
+      loadUsers();
+    });
+
+    async function loadUsers() {
+      try {
+        const response = await fetch('/api/users');
+        const data = await response.json();
+        
+        if (data.success) {
+          displayUsers(data.data);
+        } else {
+          showMessage('Erreur lors du chargement des utilisateurs', false);
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+        showMessage('Erreur de connexion', false);
       }
     }
+
+    function displayUsers(users) {
+      const usersList = document.getElementById('usersList');
+      
+      if (users.length === 0) {
+        usersList.innerHTML = '<div class="p-4 text-center text-gray-500">Aucun utilisateur trouvé</div>';
+        return;
+      }
+
+      usersList.innerHTML = users.map(user => `
+        <div class="p-6 hover:bg-gray-50 border-b border-gray-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <div class="flex-shrink-0">
+                <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <i class="fas fa-user text-indigo-600 text-lg"></i>
+                </div>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900">${user.username}</h3>
+                <p class="text-sm text-gray-600">ID: ${user.id}</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+              <div class="text-sm text-gray-500">
+                <div class="flex items-center space-x-2">
+                  <i class="fas fa-calendar-plus text-gray-400"></i>
+                  <span>Créé le ${new Date(user.createdAt).toLocaleDateString('fr-FR')}</span>
+                </div>
+                <div class="flex items-center space-x-2 mt-1">
+                  <i class="fas fa-clock text-gray-400"></i>
+                  <span>Mis à jour le ${new Date(user.updatedAt).toLocaleDateString('fr-FR')}</span>
+                </div>
+              </div>
+              
+              <div class="flex space-x-2">
+                <button onclick="viewUserDetails(${user.id})" 
+                        class="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
+                  <i class="far fa-eye mr-2"></i>
+                  Détails
+                </button>
+                <button onclick="deleteUser(${user.id})" 
+                        class="inline-flex items-center px-3 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
+                  <i class="fas fa-trash-alt mr-2"></i>
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteUser(userId) {
+      showConfirmationModal(
+        'Supprimer l\'utilisateur',
+        `Êtes-vous sûr de vouloir supprimer l'utilisateur #${userId} ? Cette action est irréversible.`,
+        async () => {
+          try {
+            const response = await fetch(`/api/users/${userId}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showMessage(`Utilisateur #${userId} supprimé avec succès`, true);
+              loadUsers();
+            } else {
+              showMessage(`Erreur: ${data.message}`, false);
+            }
+          } catch (error) {
+            console.error('Error deleting user:', error);
+            showMessage('Erreur lors de la suppression de l\'utilisateur', false);
+          }
+          closeModal();
+        }
+      );
+    }
+
     function deleteAllUsers() {
-      if(confirm('Voulez-vous vraiment supprimer tous les utilisateurs ?')) {
-        fetch('/api/users', { method: 'DELETE' })
-          .then(res => res.json())
-          .then(data => alert(data.message || 'Suppression terminée'));
-      }
+      showConfirmationModal(
+        'Supprimer tous les utilisateurs',
+        'Êtes-vous sûr de vouloir supprimer TOUS les utilisateurs ? Cette action est irréversible.',
+        async () => {
+          try {
+            const response = await fetch('/api/users', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showMessage(`Tous les utilisateurs ont été supprimés avec succès`, true);
+              loadUsers();
+            } else {
+              showMessage(`Erreur: ${data.message}`, false);
+            }
+          } catch (error) {
+            console.error('Error deleting all users:', error);
+            showMessage('Erreur lors de la suppression de tous les utilisateurs', false);
+          }
+          closeModal();
+        }
+      );
     }
+
+    function deleteAllCoupons() {
+      showConfirmationModal(
+        'Supprimer tous les coupons',
+        'Êtes-vous sûr de vouloir supprimer TOUS les coupons ? Cette action est irréversible.',
+        async () => {
+          try {
+            const response = await fetch('/api/coupons/all', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showMessage(`Tous les coupons ont été supprimés avec succès`, true);
+            } else {
+              showMessage(`Erreur: ${data.message}`, false);
+            }
+          } catch (error) {
+            console.error('Error deleting all coupons:', error);
+            showMessage('Erreur lors de la suppression de tous les coupons', false);
+          }
+          closeModal();
+        }
+      );
+    }
+
     function deleteDatabase() {
-      if(confirm('Voulez-vous vraiment supprimer toute la base de données ?')) {
-        fetch('/api/database', { method: 'DELETE' })
-          .then(res => res.json())
-          .then(data => alert(data.message || 'Suppression terminée'));
+      showConfirmationModal(
+        'Supprimer toute la base de données',
+        'Êtes-vous sûr de vouloir supprimer TOUTE la base de données ? Cette action est irréversible et supprimera définitivement toutes les données.',
+        async () => {
+          try {
+            const response = await fetch('/api/database', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              showMessage(`Toute la base de données a été supprimée avec succès`, true);
+              loadUsers();
+            } else {
+              showMessage(`Erreur: ${data.message}`, false);
+            }
+          } catch (error) {
+            console.error('Error deleting database:', error);
+            showMessage('Erreur lors de la suppression de la base de données', false);
+          }
+          closeModal();
+        }
+      );
+    }
+
+    function showConfirmationModal(title, message, onConfirm) {
+      const modal = document.getElementById('confirmationModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMessage = document.getElementById('modalMessage');
+      const confirmButton = document.getElementById('confirmButton');
+      
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      
+      confirmButton.replaceWith(confirmButton.cloneNode(true));
+      const newConfirmButton = document.getElementById('confirmButton');
+      
+      newConfirmButton.addEventListener('click', onConfirm);
+      
+      modal.style.display = 'block';
+      requestAnimationFrame(() => {
+        modal.style.opacity = '1';
+        const modalContent = modal.querySelector('.transform');
+        if (modalContent) {
+          modalContent.style.transform = 'scale(1)';
+        }
+      });
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('confirmationModal');
+      const modalContent = modal.querySelector('.transform');
+      
+      if (modalContent) {
+        modalContent.style.transform = 'scale(0.95)';
       }
+      modal.style.opacity = '0';
+      
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 200);
+    }
+
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('confirmationModal');
+      const modalContent = modal.querySelector('.transform');
+      if (event.target === modal && !modalContent.contains(event.target)) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const modal = document.getElementById('confirmationModal');
+        if (modal.style.display === 'block') {
+          closeModal();
+        }
+      }
+    });
+
+    function showMessage(message, isSuccess) {
+      const messageDiv = document.getElementById('message');
+      messageDiv.className = `mt-4 p-4 rounded-md ${isSuccess ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+      messageDiv.textContent = message;
+      messageDiv.classList.remove('hidden');
+      
+      setTimeout(() => {
+        messageDiv.classList.add('hidden');
+      }, 5000);
+    }
+
+    function logout() {
+      window.authManager.logout();
+    }
+
+    function viewUserDetails(userId) {
+      alert(`Détails de l'utilisateur #${userId}\n\nCette fonctionnalité peut être étendue pour afficher plus d'informations dans une modal.`);
     }
   </script>
 </body>
-</html> 
+</html>

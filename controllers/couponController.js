@@ -499,42 +499,47 @@ const validateCoupon = async (req, res) => {
       });
     }
 
-    // Mettre à jour le status et la date de validation
+    // Vérifier l'état des codes avant de valider le coupon
+    const codes = [
+      { exists: !!coupon.code1, valid: coupon.code1Valid },
+      { exists: !!coupon.code2, valid: coupon.code2Valid },
+      { exists: !!coupon.code3, valid: coupon.code3Valid },
+      { exists: !!coupon.code4, valid: coupon.code4Valid }
+    ];
+
+    // Compter les codes existants et leur statut
+    const existingCodes = codes.filter(code => code.exists);
+    const validCodes = codes.filter(code => code.exists && code.valid);
+    const invalidCodes = codes.filter(code => code.exists && !code.valid);
+
+    // Si tous les codes existants sont invalides, marquer le coupon comme invalid
+    if (existingCodes.length > 0 && invalidCodes.length === existingCodes.length) {
+      coupon.status = 'invalid';
+      coupon.verificationDate = new Date();
+      await coupon.save();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Coupon marqué comme invalide car tous les codes sont rejetés',
+        data: coupon,
+        reason: 'Tous les codes sont invalides'
+      });
+    }
+
+    // Sinon, valider le coupon normalement
     coupon.status = 'verified';
     coupon.verificationDate = new Date();
-
     await coupon.save();
-
-    // Envoyer un email de notification avec les codes et leurs statuts
-    // try {
-    //   const couponData = {
-    //     email: coupon.email,
-    //     type: coupon.type,
-    //     montant: coupon.montant,
-    //     devise: coupon.devise,
-    //     code1: coupon.code1,
-    //     code1Valid: coupon.code1Valid,
-    //     code2: coupon.code2,
-    //     code2Valid: coupon.code2Valid,
-    //     code3: coupon.code3,
-    //     code3Valid: coupon.code3Valid,
-    //     code4: coupon.code4,
-    //     code4Valid: coupon.code4Valid,
-    //     status: coupon.status,
-    //     createdAt: coupon.createdAt
-    //   };
-
-    //   await sendStatusNotificationEmail(coupon.email, coupon.id, 'verified', couponData);
-    //   console.log('Status notification email sent successfully');
-    // } catch (emailError) {
-    //   console.error('Error sending status notification email:', emailError);
-    //   // Ne pas faire échouer la requête si l'email échoue
-    // }
 
     res.status(200).json({
       success: true,
       message: 'Coupon validé avec succès',
-      data: coupon
+      data: coupon,
+      codesStatus: {
+        total: existingCodes.length,
+        valid: validCodes.length,
+        invalid: invalidCodes.length
+      }
     });
   } catch (error) {
     console.error('Erreur lors de la validation du coupon:', error);

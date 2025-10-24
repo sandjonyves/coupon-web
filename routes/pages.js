@@ -22,6 +22,9 @@ router.get('/profile', pageController.getProfilePage);
 /* GET /admin-coupons - Page d'administration des coupons */
 router.get('/admin-coupons', pageController.getAdminCouponsPage);
 
+/* GET /admin-users - Page d'administration des utilisateurs */
+router.get('/admin-users', pageController.getAdminUsersPage);
+
 /* GET /error - Page d'erreur */
 router.get('/error', pageController.getErrorPage);
 

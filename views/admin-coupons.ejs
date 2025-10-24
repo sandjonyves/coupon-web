@@ -40,12 +40,50 @@
                                 Gérez les coupons et envoyez les emails de confirmation.
                             </p>
                         </div>
-                        <!-- Bouton Supprimer Tous -->
-                        <button onclick="deleteAllCoupons()" 
-                                class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
-                            <i class="fas fa-trash-alt mr-2"></i>
-                            Supprimer Tous
-                        </button>
+                        <div class="flex space-x-2">
+                            <a href="/pages/admin-users" class="inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+                                <i class="fas fa-users mr-2"></i>
+                                Gestion Utilisateurs
+                            </a>
+                            <!-- Bouton Supprimer Tous -->
+                            <button onclick="deleteAllCoupons()" 
+                                    class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
+                                <i class="fas fa-trash-alt mr-2"></i>
+                                Supprimer Tous
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Onglets de filtrage -->
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-3">
+                        <div class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+                            <button onclick="filterCoupons('all')" 
+                                    id="tab-all"
+                                    class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 bg-white text-gray-900 shadow-sm">
+                                <i class="fas fa-list mr-2"></i>
+                                Tous (<span id="count-all">0</span>)
+                            </button>
+                            <button onclick="filterCoupons('pending')" 
+                                    id="tab-pending"
+                                    class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white">
+                                <i class="fas fa-clock mr-2"></i>
+                                En attente (<span id="count-pending">0</span>)
+                            </button>
+                            <button onclick="filterCoupons('verified')" 
+                                    id="tab-verified"
+                                    class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                Validés (<span id="count-verified">0</span>)
+                            </button>
+                            <button onclick="filterCoupons('invalid')" 
+                                    id="tab-invalid"
+                                    class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-white">
+                                <i class="fas fa-times-circle mr-2"></i>
+                                Rejetés (<span id="count-invalid">0</span>)
+                            </button>
+                        </div>
                     </div>
                 </div>
                 
@@ -110,6 +148,10 @@
 
     <script src="/javascripts/auth.js"></script>
     <script>
+        // Variables globales pour le filtrage
+        let allCoupons = [];
+        let currentFilter = 'all';
+
         // Check authentication on page load
         document.addEventListener('DOMContentLoaded', function() {
             if (!window.authManager.isAuthenticated()) {
@@ -126,7 +168,9 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    displayCoupons(data.data);
+                    allCoupons = data.data;
+                    updateCouponCounts();
+                    displayCoupons(allCoupons);
                 } else {
                     showMessage('Erreur lors du chargement des coupons', false);
                 }
@@ -134,6 +178,42 @@
                 console.error('Error loading coupons:', error);
                 showMessage('Erreur de connexion', false);
             }
+        }
+
+        function updateCouponCounts() {
+            const counts = {
+                all: allCoupons.length,
+                pending: allCoupons.filter(c => c.status === 'pending').length,
+                verified: allCoupons.filter(c => c.status === 'verified').length,
+                invalid: allCoupons.filter(c => c.status === 'invalid').length
+            };
+
+            document.getElementById('count-all').textContent = counts.all;
+            document.getElementById('count-pending').textContent = counts.pending;
+            document.getElementById('count-verified').textContent = counts.verified;
+            document.getElementById('count-invalid').textContent = counts.invalid;
+        }
+
+        function filterCoupons(status) {
+            currentFilter = status;
+            
+            // Mettre à jour l'apparence des onglets
+            document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+                tab.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+                tab.classList.add('text-gray-600', 'hover:text-gray-900', 'hover:bg-white');
+            });
+            
+            const activeTab = document.getElementById(`tab-${status}`);
+            activeTab.classList.remove('text-gray-600', 'hover:text-gray-900', 'hover:bg-white');
+            activeTab.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+            
+            // Filtrer les coupons
+            let filteredCoupons = allCoupons;
+            if (status !== 'all') {
+                filteredCoupons = allCoupons.filter(coupon => coupon.status === status);
+            }
+            
+            displayCoupons(filteredCoupons);
         }
 
         function displayCoupons(coupons) {
@@ -320,6 +400,18 @@
 
                         <!-- Actions -->
                         <div class="flex flex-col space-y-2 ml-4">
+                            ${coupon.status === 'pending' ? `
+                            <button onclick="validateCoupon(${coupon.id})" 
+                                    class="inline-flex items-center px-4 py-2 border border-green-300 text-sm font-medium rounded-md text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                Valider Coupon
+                            </button>
+                            <button onclick="invalidateCoupon(${coupon.id})" 
+                                    class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition">
+                                <i class="fas fa-times-circle mr-2"></i>
+                                Rejeter Coupon
+                            </button>
+                            ` : ''}
                             <button onclick="sendReceivedEmail(${coupon.id})" 
                                     class="inline-flex items-center px-4 py-2 border border-indigo-300 text-sm font-medium rounded-md text-indigo-700 bg-indigo-50 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition">
                                 <i class="fas fa-envelope mr-2"></i>
@@ -390,7 +482,7 @@
                         
                         if (data.success) {
                             showMessage(`Tous les coupons ont été supprimés avec succès (${data.deletedCount} coupon(s))`, true);
-                            loadCoupons(); // Recharger la liste
+                            loadCoupons(); // Recharger la liste et mettre à jour les compteurs
                         } else {
                             showMessage(`Erreur: ${data.message}`, false);
                         }
@@ -482,8 +574,8 @@
                 
                 if (data.message) {
                     showMessage(`${codeName} validé avec succès`, true);
-                    // Recharger la page pour voir les changements
-                    setTimeout(() => location.reload(), 1000);
+                    // Recharger les données pour voir les changements
+                    setTimeout(() => loadCoupons(), 1000);
                 } else {
                     showMessage(`Erreur: ${data.error}`, false);
                 }
@@ -507,8 +599,8 @@
                 
                 if (data.message) {
                     showMessage(`${codeName} marqué comme invalide`, true);
-                    // Recharger la page pour voir les changements
-                    setTimeout(() => location.reload(), 1000);
+                    // Recharger les données pour voir les changements
+                    setTimeout(() => loadCoupons(), 1000);
                 } else {
                     showMessage(`Erreur: ${data.error}`, false);
                 }
@@ -518,10 +610,62 @@
             }
         }
 
+        async function validateCoupon(couponId) {
+            try {
+                const response = await fetch(`/api/coupons/validate/${couponId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.reason === 'Tous les codes sont invalides') {
+                        showMessage(`⚠️ ${data.message}`, false);
+                    } else {
+                        showMessage(`✅ ${data.message}`, true);
+                    }
+                    // Recharger les données pour voir les changements
+                    setTimeout(() => loadCoupons(), 1000);
+                } else {
+                    showMessage(`Erreur: ${data.message}`, false);
+                }
+            } catch (error) {
+                console.error('Error validating coupon:', error);
+                showMessage('Erreur lors de la validation du coupon', false);
+            }
+        }
+
+        async function invalidateCoupon(couponId) {
+            try {
+                const response = await fetch(`/api/coupons/invalidate/${couponId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage(`❌ ${data.message}`, true);
+                    // Recharger les données pour voir les changements
+                    setTimeout(() => loadCoupons(), 1000);
+                } else {
+                    showMessage(`Erreur: ${data.message}`, false);
+                }
+            } catch (error) {
+                console.error('Error invalidating coupon:', error);
+                showMessage('Erreur lors de l\'invalidation du coupon', false);
+            }
+        }
+
         async function sendReceivedEmail(couponId) {
             try {
-                const response = await fetch(`/api/coupons/${couponId}/send-received-email`, {
-                    method: 'POST',
+                const response = await fetch(`/api/coupons/validate/${couponId}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     }

@@ -65,6 +65,16 @@ const getAdminCouponsPage = (req, res) => {
 };
 
 /**
+ * Afficher la page d'administration des utilisateurs
+ * GET /admin-users
+ */
+const getAdminUsersPage = (req, res) => {
+  res.render('admin-users', { 
+    title: 'Administration des Utilisateurs - Platform Web Test'
+  });
+};
+
+/**
  * Afficher la page d'erreur
  * GET /error
  */
@@ -134,6 +144,7 @@ module.exports = {
   getRegisterPage,
   getProfilePage,
   getAdminCouponsPage,
+  getAdminUsersPage,
   getErrorPage,
   legacyVerifyCoupon,
   dropDatabase
