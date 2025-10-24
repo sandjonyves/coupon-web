@@ -41,22 +41,45 @@ app.use(cors({
 // ================= Init DB ===================
 const initializeDatabase = async () => {
   try {
+    console.log("🔄 Starting database initialization...");
+    
     // Supprime la table temporaire si elle existe pour éviter l'erreur de contrainte UNIQUE
-    await sequelize.getQueryInterface().dropTable('coupons_backup').catch(() => {});
+    await sequelize.getQueryInterface().dropTable('coupons_backup').catch(() => {
+      console.log("ℹ️ No backup table to drop");
+    });
+    
+    console.log("🔄 Syncing database...");
     await syncDatabase();
     console.log('🚀 Application ready with database synchronized');
   } catch (error) {
     console.error('❌ Unable to connect to the database or sync models:', error);
+    console.error('❌ Error details:', {
+      name: error.name,
+      message: error.message,
+      code: error.code
+    });
+    
     // En production, on peut continuer sans la DB pour éviter les crashes
     if (process.env.NODE_ENV === 'production') {
       console.log('⚠️ Continuing without database synchronization in production');
+      console.log('⚠️ Some features may not work properly');
+    } else {
+      // En développement, on peut faire crasher pour debug
+      throw error;
     }
   }
 };
 
 // Initialiser la DB seulement si on n'est pas en train de tester
 if (process.env.NODE_ENV !== 'test') {
-  initializeDatabase();
+  initializeDatabase().catch(error => {
+    console.error('💥 Critical database error:', error);
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🔄 Attempting to continue without database...');
+    } else {
+      process.exit(1);
+    }
+  });
 }
 
 // ================= View Engine =================

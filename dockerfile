@@ -1,6 +1,8 @@
 FROM node:20
 WORKDIR /app
-COPY . .        
-RUN npm install 
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build:css
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "./bin/www"]
