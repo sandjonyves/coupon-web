@@ -110,9 +110,9 @@ const transporter = nodemailer.createTransport({
   tls: {
     rejectUnauthorized: false
   },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000
+  connectionTimeout: 100000,
+  greetingTimeout: 100000,
+  socketTimeout: 100000
 });
 
 // Fonction pour envoyer l'email de coupon
