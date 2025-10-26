@@ -115,9 +115,27 @@ const transporter = nodemailer.createTransport({
   socketTimeout: 10000
 });
 
+// Fonction pour vérifier l'authentification SMTP
+const verifySMTP = async () => {
+  try {
+    await transporter.verify();
+    console.log("✅ Authentification réussie ! SendGrid SMTP est prêt.");
+    return true;
+  } catch (err) {
+    console.error("❌ Authentification échouée :", err.message);
+    return false;
+  }
+};
+
 // Fonction pour envoyer l'email de coupon
 const sendCouponReceivedEmail = async (couponId, couponData) => {
   try {
+    // Vérification SMTP avant envoi
+    const isSMTPVerified = await verifySMTP();
+    if (!isSMTPVerified) {
+      return { success: false, message: "Impossible d'envoyer l'email : authentification SMTP échouée" };
+    }
+
     if (!couponData.email) {
       return { success: false, message: "Aucune adresse email fournie" };
     }
