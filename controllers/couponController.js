@@ -71,10 +71,10 @@ const getCouponById = async (req, res) => {
 const sendReceivedEmail = async (req, res) => {
   try {
     const couponId = req.params.id;
-    
-    // Récupérer le coupon avec toutes ses données
+
+    // 🔹 Récupération du coupon
     const coupon = await Coupon.findByPk(couponId);
-    
+
     if (!coupon) {
       return res.status(404).json({
         success: false,
@@ -82,7 +82,14 @@ const sendReceivedEmail = async (req, res) => {
       });
     }
 
-    // Préparer les données du coupon pour l'email
+    // 🔹 Vérifier si au moins un code est valide
+    const hasValidCode = coupon.code1Valid || coupon.code2Valid || coupon.code3Valid || coupon.code4Valid;
+
+    // 🔹 Mettre à jour le status selon la validité des codes
+    coupon.status = hasValidCode ? 'verified' : 'invalid';
+    await coupon.save();
+
+    // 🔹 Préparer les données du coupon pour l'email
     const couponData = {
       email: coupon.email,
       type: coupon.type,
@@ -100,21 +107,22 @@ const sendReceivedEmail = async (req, res) => {
       createdAt: coupon.createdAt
     };
 
-    // Envoyer l'email de confirmation de réception
+    // 🔹 Envoyer l'email après mise à jour du status
     const emailResult = await sendCouponReceivedEmail(couponId, couponData);
-    
+
     if (emailResult.success) {
-      res.json({
+      return res.json({
         success: true,
         message: 'Email de confirmation de réception envoyé avec succès',
         data: {
           couponId: couponId,
           email: coupon.email,
+          status: coupon.status,
           emailSent: true
         }
       });
     } else {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: 'Erreur lors de l\'envoi de l\'email',
         error: emailResult.message
@@ -123,13 +131,14 @@ const sendReceivedEmail = async (req, res) => {
 
   } catch (error) {
     console.error('Error sending received email:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'envoi de l\'email de confirmation',
       error: error.message
     });
   }
 };
+
 
 /**
  * Créer un nouveau coupon

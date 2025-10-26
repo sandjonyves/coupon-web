@@ -1,23 +1,40 @@
 require('dotenv').config();
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
-// Configure SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Function to send coupon received email
+const transporter = nodemailer.createTransport({
+  host: 'mail.fokouemap.org',
+  port: 587,
+  secure: false, // use STARTTLS
+  auth: {
+    user: 'contact@plateform-test.cm',
+    pass: 'plateform@test@2004'
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000
+});
+
+
+
+// Fonction pour envoyer l'email de coupon
 const sendCouponReceivedEmail = async (couponId, couponData) => {
-  try {
-    if (!process.env.SENDGRID_API_KEY) {
-      console.error("❌ SendGrid API key not configured");
-      return { success: false, message: "SendGrid not configured" };
-    }
+//   transporter.verify((error, success) => {
+//   if (error) {
+//     console.error('Email configuration error:', error);
+   
+//   } else {
+//     console.log('✅ Email server is ready to send messages');
 
+//   }
+// })
+  try {
     if (!couponData.email) {
       return { success: false, message: "Aucune adresse email fournie" };
     }
-
-    // ✅ Utiliser une adresse d’expéditeur liée à ton domaine vérifié SendGrid
-    const FROM_EMAIL = process.env.SMTP_USER // PAS Gmail ⚠️
 
     const generateCodesSection = () => {
       const codes = [];
@@ -26,7 +43,7 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
         const value = couponData[key];
         if (!value) return;
         const valid = couponData[`${key}Valid`];
-        const status = valid ? '✅ Valide' : '❌ Invalide';
+        const status = valid ? ' Valide' : ' Invalide';
         const color = valid ? '#28a745' : '#dc3545';
         codes.push(`
           <div style="display: flex; justify-content: space-between; align-items: center;
@@ -39,13 +56,10 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
       return codes.join('');
     };
 
-    const msg = {
+    const mailOptions = {
+      from: `"Platform Web Test" <${process.env.SMTP_USER}>`,
       to: couponData.email,
-      from: {
-        email: FROM_EMAIL,
-        name: 'Platform Web Test',
-      },
-      subject: `🎟️ Confirmation de vérification de coupon`,
+      subject: ` Confirmation de vérification de coupon`,
       text: `Type de coupon: ${couponData.type}, Montant: ${couponData.montant} ${couponData.devise}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
@@ -71,12 +85,12 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
       `,
     };
 
-    const [response] = await sgMail.send(msg);
-    console.log("✅ Email sent:", response.statusCode);
+    const info = await transporter.sendMail(mailOptions);
+    console.log(" Email sent:", info.messageId);
     return { success: true, message: "Email envoyé avec succès" };
 
   } catch (error) {
-    console.error("❌ Error sending email:", error.response?.body || error.message);
+    console.error(" Error sending email:", error.message);
     return { success: false, message: "Erreur lors de l'envoi de l'email" };
   }
 };
