@@ -186,7 +186,7 @@
 /// mailersend version
 
 
-import dotenv from "dotenv";
+const dotenv = require("dotenv");
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
 dotenv.config();
