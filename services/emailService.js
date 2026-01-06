@@ -187,7 +187,12 @@
 
 
 const dotenv = require("dotenv");
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+const {
+  MailerSend,
+  EmailParams,
+  Sender,
+  Recipient
+} = require("mailersend");
 
 dotenv.config();
 
