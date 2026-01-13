@@ -6,7 +6,7 @@
  */
 const getNewHomePage = (req, res) => {
   res.render('home', { 
-    title: 'Plateform-Test.cm - Vérification de Coupons en Ligne | Cameroun',
+    title: 'Plateform-Test.cm - Vérification de Coupons en Ligne | Europe',
     success_msg: req.flash('success_msg'),
     error_msg: req.flash('error_msg')
   });
