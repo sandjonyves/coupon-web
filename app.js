@@ -41,19 +41,19 @@ app.use(cors({
 // ================= Init DB ===================
 const initializeDatabase = async () => {
   try {
-    console.log("🔄 Starting database initialization...");
+    console.log(" Starting database initialization...");
     
     // Supprime la table temporaire si elle existe pour éviter l'erreur de contrainte UNIQUE
     await sequelize.getQueryInterface().dropTable('coupons_backup').catch(() => {
       console.log("ℹ️ No backup table to drop");
     });
     
-    console.log("🔄 Syncing database...");
+    console.log(" Syncing database...");
     await syncDatabase();
-    console.log('🚀 Application ready with database synchronized');
+    console.log(' Application ready with database synchronized');
   } catch (error) {
-    console.error('❌ Unable to connect to the database or sync models:', error);
-    console.error('❌ Error details:', {
+    console.error(' Unable to connect to the database or sync models:', error);
+    console.error(' Error details:', {
       name: error.name,
       message: error.message,
       code: error.code
@@ -75,7 +75,7 @@ if (process.env.NODE_ENV !== 'test') {
   initializeDatabase().catch(error => {
     console.error('💥 Critical database error:', error);
     if (process.env.NODE_ENV === 'production') {
-      console.log('🔄 Attempting to continue without database...');
+      console.log(' Attempting to continue without database...');
     } else {
       process.exit(1);
     }
@@ -146,7 +146,7 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('❌ Erreur détectée :', err.message);
+  console.error(' Erreur détectée :', err.message);
 
   // Si la requête provient de l'API → on renvoie du JSON
   if (req.originalUrl.startsWith('/api')) {

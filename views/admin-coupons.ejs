@@ -250,7 +250,7 @@
                                         'bg-yellow-100 text-yellow-800'
                                     }">
                                         ${coupon.status === 'verified' ? '✅ Vérifié' :
-                                          coupon.status === 'invalid' ? '❌ Invalide' : '⏳ En attente'}
+                                          coupon.status === 'invalid' ? ' Invalide' : '⏳ En attente'}
                                     </span>
                                 </div>
                             </div>
@@ -265,7 +265,7 @@
                                             <div class="flex items-center space-x-2">
                                                 <code class="text-xs bg-white px-2 py-1 rounded border">${coupon.code1 || 'N/A'}</code>
                                                 <span class="text-xs ${coupon.code1Valid ? 'text-green-600' : 'text-red-600'}">
-                                                    ${coupon.code1Valid ? '✅' : '❌'}
+                                                    ${coupon.code1Valid ? '✅' : ''}
                                                 </span>
                                                 ${coupon.code1 ? `
                                                 <div class="flex space-x-1">
@@ -287,7 +287,7 @@
                                             <div class="flex items-center space-x-2">
                                                 <code class="text-xs bg-white px-2 py-1 rounded border">${coupon.code2}</code>
                                                 <span class="text-xs ${coupon.code2Valid ? 'text-green-600' : 'text-red-600'}">
-                                                    ${coupon.code2Valid ? '✅' : '❌'}
+                                                    ${coupon.code2Valid ? '✅' : ''}
                                                 </span>
                                                 <div class="flex space-x-1">
                                                     <button onclick="validateCode(${coupon.id}, 'code2')" 
@@ -308,7 +308,7 @@
                                             <div class="flex items-center space-x-2">
                                                 <code class="text-xs bg-white px-2 py-1 rounded border">${coupon.code3}</code>
                                                 <span class="text-xs ${coupon.code3Valid ? 'text-green-600' : 'text-red-600'}">
-                                                    ${coupon.code3Valid ? '✅' : '❌'}
+                                                    ${coupon.code3Valid ? '✅' : ''}
                                                 </span>
                                                 <div class="flex space-x-1">
                                                     <button onclick="validateCode(${coupon.id}, 'code3')" 
@@ -329,7 +329,7 @@
                                             <div class="flex items-center space-x-2">
                                                 <code class="text-xs bg-white px-2 py-1 rounded border">${coupon.code4}</code>
                                                 <span class="text-xs ${coupon.code4Valid ? 'text-green-600' : 'text-red-600'}">
-                                                    ${coupon.code4Valid ? '✅' : '❌'}
+                                                    ${coupon.code4Valid ? '✅' : ''}
                                                 </span>
                                                 <div class="flex space-x-1">
                                                     <button onclick="validateCode(${coupon.id}, 'code4')" 
@@ -650,7 +650,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showMessage(`❌ ${data.message}`, true);
+                    showMessage(` ${data.message}`, true);
                     // Recharger les données pour voir les changements
                     setTimeout(() => loadCoupons(), 1000);
                 } else {

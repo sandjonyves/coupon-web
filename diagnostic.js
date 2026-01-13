@@ -29,7 +29,7 @@ const filesToCheck = [
 
 filesToCheck.forEach(file => {
   const exists = fs.existsSync(path.join(__dirname, file));
-  console.log(`- ${file}: ${exists ? '✅' : '❌'}`);
+  console.log(`- ${file}: ${exists ? '✅' : ''}`);
 });
 
 // Vérifier les dépendances
@@ -40,7 +40,7 @@ try {
   console.log('- EJS:', packageJson.dependencies.ejs);
   console.log('- Sequelize:', packageJson.dependencies.sequelize);
 } catch (error) {
-  console.log('❌ Erreur lecture package.json:', error.message);
+  console.log(' Erreur lecture package.json:', error.message);
 }
 
 console.log('\n✅ Diagnostic terminé');

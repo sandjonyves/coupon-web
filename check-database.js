@@ -29,7 +29,7 @@ async function checkDatabase() {
     console.log('Table structure:', tableInfo[0]);
     
   } catch (error) {
-    console.error('❌ Error checking database:', error);
+    console.error(' Error checking database:', error);
   } finally {
     process.exit(0);
   }

@@ -171,7 +171,7 @@
 //     return { success: true, message: "Email envoyé avec succès" };
 
 //   } catch (error) {
-//     console.error("❌ Erreur lors de l'envoi de l'email via SendGrid API:", error.message);
+//     console.error(" Erreur lors de l'envoi de l'email via SendGrid API:", error.message);
 //     return { success: false, message: "Erreur lors de l'envoi de l'email via API" };
 //   }
 // };
@@ -279,7 +279,7 @@
 //     return { success: true, message: "Email envoyé avec succès" };
 
 //   } catch (error) {
-//     console.error("❌ Erreur MailerSend :", error);
+//     console.error(" Erreur MailerSend :", error);
 //     return { success: false, message: "Erreur lors de l'envoi de l'email" };
 //   }
 // };
@@ -314,9 +314,9 @@ const transporter = nodemailer.createTransport({
 ======================= */
 transporter.verify((error, success) => {
   if (error) {
-    console.error("❌ Erreur SMTP :", error);
+    console.error(" Erreur SMTP :", error);
   } else {
-    console.log("✅ Serveur SMTP prêt à envoyer des emails");
+    console.log(" Serveur SMTP prêt à envoyer des emails");
   }
 });
 
@@ -399,7 +399,7 @@ const sendCouponReceivedEmail = async (couponId, couponData) => {
     return { success: true, message: "Email envoyé avec succès" };
 
   } catch (error) {
-    console.error("❌ Erreur lors de l'envoi :", error);
+    console.error(" Erreur lors de l'envoi :", error);
     return { success: false, message: "Erreur lors de l'envoi de l'email" };
   }
 };

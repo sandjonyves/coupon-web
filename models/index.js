@@ -8,10 +8,10 @@ const syncDatabase = async () => {
     await sequelize.authenticate();
     console.log(' Database connection established successfully.');
     
-    await sequelize.sync({ force: false , alter: true}); // Set force: true to recreate tables
+    await sequelize.sync(); // Set force: true to recreate tables
     console.log(' Database synchronized successfully.');
   } catch (error) {
-    console.error('❌ Unable to connect to the database or sync models:', error);
+    console.error(' Unable to connect to the database or sync models:', error);
   }
 };
 
