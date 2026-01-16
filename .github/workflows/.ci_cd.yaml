@@ -62,8 +62,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker-backend
     steps:
-      - name: Trigger Render Deploy Hooks
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      # - name: Trigger Render Deploy Hooks
+      #   run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
