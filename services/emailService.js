@@ -167,7 +167,7 @@
 //     };
 
 //     await sgMail.send(msg);
-//     console.log("✅ Email envoyé avec succès via SendGrid API !");
+//     console.log(" Email envoyé avec succès via SendGrid API !");
 //     return { success: true, message: "Email envoyé avec succès" };
 
 //   } catch (error) {
@@ -226,7 +226,7 @@
 //   return codes.join("");
 // };
 
-// // ✅ FONCTION (sans export ES Module)
+// //  FONCTION (sans export ES Module)
 // const sendCouponReceivedEmail = async (couponId, couponData) => {
 //   try {
 //     if (!couponData.email) {
@@ -250,7 +250,7 @@
 //         </div>
 
 //         <p style="margin-top:30px; text-align:center; color:#333;">
-//           🙏 Merci pour votre confiance et à très bientôt sur notre plateforme.
+//            Merci pour votre confiance et à très bientôt sur notre plateforme.
 //         </p>
 
 //         <div style="text-align:center; margin-top:20px; color:#999; font-size:12px;">
@@ -275,7 +275,7 @@
 
 //     await mailerSend.email.send(emailParams);
 
-//     console.log("✅ Email envoyé avec succès via MailerSend");
+//     console.log(" Email envoyé avec succès via MailerSend");
 //     return { success: true, message: "Email envoyé avec succès" };
 
 //   } catch (error) {
@@ -284,7 +284,7 @@
 //   }
 // };
 
-// // ✅ EXPORT COMMONJS
+// //  EXPORT COMMONJS
 // module.exports = {
 //   sendCouponReceivedEmail,
 // };

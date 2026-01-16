@@ -45,7 +45,7 @@ const initializeDatabase = async () => {
     
     // Supprime la table temporaire si elle existe pour éviter l'erreur de contrainte UNIQUE
     await sequelize.getQueryInterface().dropTable('coupons_backup').catch(() => {
-      console.log("ℹ️ No backup table to drop");
+      console.log("ℹ No backup table to drop");
     });
     
     console.log(" Syncing database...");
@@ -61,8 +61,8 @@ const initializeDatabase = async () => {
     
     // En production, on peut continuer sans la DB pour éviter les crashes
     if (process.env.NODE_ENV === 'production') {
-      console.log('⚠️ Continuing without database synchronization in production');
-      console.log('⚠️ Some features may not work properly');
+      console.log(' Continuing without database synchronization in production');
+      console.log(' Some features may not work properly');
     } else {
       // En développement, on peut faire crasher pour debug
       throw error;
@@ -73,7 +73,7 @@ const initializeDatabase = async () => {
 // Initialiser la DB seulement si on n'est pas en train de tester
 if (process.env.NODE_ENV !== 'test') {
   initializeDatabase().catch(error => {
-    console.error('💥 Critical database error:', error);
+    console.error(' Critical database error:', error);
     if (process.env.NODE_ENV === 'production') {
       console.log(' Attempting to continue without database...');
     } else {
@@ -111,9 +111,9 @@ const sessionConfig = {
 if (process.env.NODE_ENV === 'production') {
   // Pour Render, on peut utiliser connect-redis ou simplement désactiver les sessions
   // Pour l'instant, on utilise MemoryStore mais avec des avertissements supprimés
-  console.log('⚠️ Production: Using MemoryStore for sessions (consider Redis for scaling)');
+  console.log(' Production: Using MemoryStore for sessions (consider Redis for scaling)');
 } else {
-  console.log('🔧 Development: Using MemoryStore for sessions');
+  console.log(' Development: Using MemoryStore for sessions');
 }
 
 app.use(session(sessionConfig));
